@@ -1,0 +1,5 @@
+bval01:7
+bval02:7
+ival_max:8
+tnum:3009
+x_num:76

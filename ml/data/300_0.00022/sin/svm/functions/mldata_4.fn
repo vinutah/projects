@@ -1,0 +1,1 @@
+#define predict_4stepAhead_sin(fv0,fv1,fv2) ((0.642738736659*fv0)+(-0.30200318701*fv1)+(0.648863236264*fv2))

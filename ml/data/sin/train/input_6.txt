@@ -1,0 +1,6 @@
+bval01:9
+bval02:9
+freq:13
+ampl:11
+tnum:3019
+x_num:51

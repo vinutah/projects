@@ -1,0 +1,8 @@
+svm_type epsilon_svr
+kernel_type linear
+nr_class 2
+total_sv 2
+rho -0.122302
+SV
+-0.05088077195164188 1:1 2:1 3:1.00001 
+0.0508807719516419 1:7.4923 2:7.40385 3:7.32752 

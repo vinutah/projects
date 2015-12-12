@@ -1,0 +1,5 @@
+bval01:9
+bval02:9
+ival:5
+tnum:3021
+x_num:36

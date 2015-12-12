@@ -1,0 +1,1 @@
+#define predict_6stepAhead_sin(fv0,fv1,fv2) ((0.380071119476*fv0)+(0.319623865749*fv1)+(0.289640992677*fv2))

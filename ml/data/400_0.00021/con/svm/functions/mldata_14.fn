@@ -1,0 +1,1 @@
+#define predict_14stepAhead_con(fv0,fv1,fv2) ((0.341467828273*fv0)+(0.325299973388*fv1)+(0.310693746919*fv2))

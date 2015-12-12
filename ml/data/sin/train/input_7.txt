@@ -1,0 +1,6 @@
+bval01:5
+bval02:5
+freq:15
+ampl:5
+tnum:3095
+x_num:52

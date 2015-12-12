@@ -1,0 +1,13 @@
+CDF=0.1, threshold=0.0377656
+CDF=0.3, threshold=0.0378523
+CDF=0.5, threshold=0.0378852
+CDF=0.6, threshold=0.0378969
+CDF=0.8, threshold=0.037946
+CDF=0.9, threshold=0.0379866
+CDF=0.95, threshold=0.0381288
+CDF=0.99, threshold=0.0386803
+CDF=0.999, threshold=0.0393359
+CDF=0.9999, threshold=0.0393359
+CDF=0.999999, threshold=0.0393359
+CDF=0.99999999, threshold=0.0393359
+CDF=1, threshold=0.044728

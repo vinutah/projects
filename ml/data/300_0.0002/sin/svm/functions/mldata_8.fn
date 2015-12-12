@@ -1,0 +1,1 @@
+#define predict_8stepAhead_sin(fv0,fv1,fv2) ((0.312385476738*fv0)+(0.386225048663*fv1)+(0.284336499951*fv2))

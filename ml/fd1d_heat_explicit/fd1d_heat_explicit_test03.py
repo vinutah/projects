@@ -1,25 +1,7 @@
 #!/usr/bin/env python
 
-#*****************************************************************************80
-
 def fd1d_heat_explicit_test03 ( ):
-
-#*****************************************************************************80
-#
-## FD1D_HEAT_EXPLICIT_TEST03 does a simple test problem.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    06 November 2014
-#
-#  Author:
-#
-#    John Burkardt
-#
+# FD1D_HEAT_EXPLICIT_TEST03 does a simple test problem.
   from fd1d_heat_explicit import fd1d_heat_explicit
   from fd1d_heat_explicit_cfl import fd1d_heat_explicit_cfl
   from math import sqrt
@@ -113,69 +95,24 @@ def fd1d_heat_explicit_test03 ( ):
   return
 
 def bc_test03 ( x_num, x, t, h ):
-
-#*****************************************************************************80
-#
-## BC_TEST03 evaluates the boundary conditions for problem 3.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    06 November 2014
-#
-#  Author:
-#
-#    John Burkardt
-#
-#  Parameters:
-#
+#    BC_TEST03 evaluates the boundary conditions for problem 3.
 #    Input, integer X_NUM, the number of nodes.
-#
 #    Input, real X(X_NUM,1), the node coordinates.
-#
 #    Input, real T, the current time.
-#
 #    Input, real H(X_NUM,1), the current heat values.
-#
 #    Output, real H(X_NUM,1), the current heat values, after boundary
 #    conditions have been imposed.
-#
   h[0]       = 15.0
   h[x_num-1] = 25.0
 
   return h
 
 def ic_test03 ( x_num, x, t ):
-
-#*****************************************************************************80
-#
-## IC_TEST03 evaluates the initial condition for problem 3.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    06 November 2014
-#
-#  Author:
-#
-#    John Burkardt
-#
-#  Parameters:
-#
+#    IC_TEST03 evaluates the initial condition for problem 3.
 #    Input, integer X_NUM, the number of nodes.
-#
 #    Input, real X(X_NUM,1), the node coordinates.
-#
 #    Input, real T, the initial time.
-#
 #    Output, real H(X_NUM,1), the heat values at the initial time.
-#
   import numpy as np
 
   h = np.zeros ( x_num )
@@ -191,59 +128,17 @@ def ic_test03 ( x_num, x, t ):
   return h
 
 def k_test03 ( ):
-
-#*****************************************************************************80
-#
-## K_TEST03 evaluates the conductivity for problem 3.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    06 November 2014
-#
-#  Author:
-#
-#    John Burkardt
-#
-#  Parameters:
-#
-#    Output, real K, the conducitivity.
-#
+#   k_test03 evaluates the conductivity for problem 3.
+#   Output, real K, the conducitivity.
   k = 2.0
 
   return k
 
 def rhs_test03 ( x_num, x, t ):
-
-#*****************************************************************************80
-#
-## RHS_TEST03 evaluates the right hand side for problem 3.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    06 November 2014
-#
-#  Author:
-#
-#    John Burkardt
-#
-#  Parameters:
-#
 #    Input, integer X_NUM, the number of nodes.
-#
 #    Input, real X(X_NUM), the node coordinates.
-#
 #    Input, real T, the current time.
-#
 #    Output, real VALUE(X_NUM), the source term.
-#
   import numpy as np
 
   value = np.zeros ( x_num )

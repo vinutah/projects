@@ -1,33 +1,11 @@
 #!/usr/bin/env python
 
 def r8mat_write ( filename, m, n, a ):
-
-#*****************************************************************************80
-#
-## R8MAT_WRITE writes an R8MAT to a file.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license.
-#
-#  Modified:
-#
-#    12 October 2014
-#
-#  Author:
-#
-#    John Burkardt
-#
-#  Parameters:
-#
 #    Input, string FILENAME, the name of the output file.
-#
 #    Input, integer M, the number of rows in A.
-#
 #    Input, integer N, the number of columns in A.
-#
 #    Input, real A(M,N), the matrix.
-#
+  
   output = open ( filename, 'w' )
 
   for i in range ( 0, m ):
@@ -42,22 +20,6 @@ def r8mat_write ( filename, m, n, a ):
 
 def r8mat_write_test ( ):
 
-#*****************************************************************************80
-#
-## R8MAT_WRITE_TEST tests R8MAT_WRITE.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license.
-#
-#  Modified:
-#
-#    12 October 2014
-#
-#  Author:
-#
-#    John Burkardt
-#
   import numpy as np
 
   print ''
@@ -88,4 +50,3 @@ if ( __name__ == '__main__' ):
   timestamp ( )
   r8mat_write_test ( )
   timestamp ( )
-

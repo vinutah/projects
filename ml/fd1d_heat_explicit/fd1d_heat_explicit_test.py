@@ -3,25 +3,8 @@
 #*****************************************************************************80
 
 def fd1d_heat_explicit_test ( ):
-
-#*****************************************************************************80
-#
-## FD1D_HEAT_EXPLICIT_TEST tests the FD1D_HEAT_EXPLICIT library.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    06 November 2014
-#
-#  Author:
-#
-#    John Burkardt
-#
+# FD1D_HEAT_EXPLICIT_TEST tests the FD1D_HEAT_EXPLICIT library.
   from fd1d_heat_explicit_test01 import fd1d_heat_explicit_test01 
-  from fd1d_heat_explicit_test02 import fd1d_heat_explicit_test02
   from fd1d_heat_explicit_test03 import fd1d_heat_explicit_test03
 
   print ''
@@ -30,7 +13,6 @@ def fd1d_heat_explicit_test ( ):
   print '  Test the FD1D_HEAT_EXPLICIT library.'
 
   fd1d_heat_explicit_test01 ( )
-  fd1d_heat_explicit_test02 ( )
   fd1d_heat_explicit_test03 ( )
 #
 #  Terminate.
@@ -46,4 +28,3 @@ if ( __name__ == '__main__' ):
   timestamp ( )
   fd1d_heat_explicit_test ( )
   timestamp ( )
-

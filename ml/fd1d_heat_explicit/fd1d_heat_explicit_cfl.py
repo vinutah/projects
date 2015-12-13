@@ -1,12 +1,7 @@
 #!/usr/bin/env python
 
-#*****************************************************************************80
-
 def fd1d_heat_explicit_cfl ( k, t_num, t_min, t_max, x_num, x_min, x_max ):
-
-#*****************************************************************************80
-#
-## FD1D_HEAT_EXPLICIT_CFL: compute the Courant-Friedrichs-Loewy coefficient.
+# FD1D_HEAT_EXPLICIT_CFL: compute the Courant-Friedrichs-Loewy coefficient.
 #
 #  Discussion:
 #
@@ -44,42 +39,14 @@ def fd1d_heat_explicit_cfl ( k, t_num, t_min, t_max, x_num, x_min, x_max ):
 #    In order for accurate results to be computed by this explicit method,
 #    the CFL coefficient must be less than 0.5!
 #
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    24 January 2012
-#
-#  Author:
-# 
-#    John Burkardt
-#
-#  Reference:
-#
-#    George Lindfield, John Penny,
-#    Numerical Methods Using MATLAB,
-#    Second Edition,
-#    Prentice Hall, 1999,
-#    ISBN: 0-13-012641-1,
-#    LC: QA297.P45.
-#
 #  Parameters:
-#
 #    Input, real K, the heat conductivity coefficient.
-#
 #    Input, integer T_NUM, the number of time values, including the initial
 #    value.
-#
 #    Input, real T_MIN, T_MAX, the minimum and maximum times.
-#
 #    Input, integer X_NUM, the number of nodes.
-#
 #    Input, real X_MIN, X_MAX, the minimum and maximum spatial coordinates.
-#
 #    Output, real CFL, the Courant-Friedrichs-Loewy coefficient.
-#
   from sys import exit
 
   x_step = ( x_max - x_min ) / ( x_num - 1 )

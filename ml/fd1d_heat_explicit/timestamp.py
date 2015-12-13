@@ -1,27 +1,6 @@
 #!/usr/bin/env python
 
 def timestamp ( ):
-
-#*****************************************************************************80
-#
-## TIMESTAMP prints the date as a timestamp.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    06 April 2013
-#
-#  Author:
-#
-#    John Burkardt
-#
-#  Parameters:
-#
-#    None
-#
   import time
 
   t = time.time ( )
@@ -30,27 +9,6 @@ def timestamp ( ):
   return None
 
 def timestamp_test ( ):
-
-#*****************************************************************************80
-#
-## TIMESTAMP_TEST tests TIMESTAMP.
-#
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    03 December 2014
-#
-#  Author:
-#
-#    John Burkardt
-#
-#  Parameters:
-#
-#    None
-#
   print ''
   print 'TIMESTAMP_TEST:'
   print '  Python version:'
@@ -63,7 +21,5 @@ def timestamp_test ( ):
   print 'TIMESTAMP_TEST:'
   print '  Normal end of execution.'
 
-
 if ( __name__ == '__main__' ):
   timestamp_test ( )
-

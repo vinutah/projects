@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 
-#*****************************************************************************80
-
 def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h ):
-
-#*****************************************************************************80
-#
 ## FD1D_HEAT_EXPLICIT: Finite difference solution of 1D heat equation.
-#
 #  Discussion:
 #
 #    This program takes one time step to solve the 1D heat equation 
@@ -47,46 +41,15 @@ def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h ):
 #    In order for accurate results to be computed by this explicit method,
 #    the CFL coefficient must be less than 0.5!
 #
-#  Licensing:
-#
-#    This code is distributed under the GNU LGPL license. 
-#
-#  Modified:
-#
-#    31 January 2012
-#
-#  Author:
-# 
-#    John Burkardt
-#
-#  Reference:
-#
-#    George Lindfield, John Penny,
-#    Numerical Methods Using MATLAB,
-#    Second Edition,
-#    Prentice Hall, 1999,
-#    ISBN: 0-13-012641-1,
-#    LC: QA297.P45.
-#
-#  Parameters:
-#
 #    Input, integer X_NUM, the number of points to use in the spatial dimension.
-#
 #    Input, real X(X_NUM,1), the coordinates of the nodes.
-#
 #    Input, real T, the current time.
-#
 #    Input, real DT, the size of the time step.
-#
 #    Input, real CFL, the Courant-Friedrichs-Loewy coefficient,
 #    computed by FD1D_HEAT_EXPLICIT_CFL.
-#
 #    Input, real H(X_NUM,1), the solution at the current time.
-#
 #    Input, @RHS, the function which evaluates the right hand side.
-#
 #    Input, @BC, the function which evaluates the boundary conditions.
-#
 #    Output, real H_NEW(X_NUM,1), the solution at time T+DT.
 #
   import numpy as np
@@ -103,5 +66,3 @@ def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h ):
   h_new = bc ( x_num, x, t + dt, h_new )
 
   return h_new
-
-

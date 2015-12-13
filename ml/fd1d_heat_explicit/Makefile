@@ -1,3 +1,3 @@
 all: clean
 clean:
-	rm -rf *.png
+	rm -rf *txt *.png *pyc

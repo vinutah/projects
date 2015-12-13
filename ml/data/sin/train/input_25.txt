@@ -1,6 +1,0 @@
-bval01:7
-bval02:7
-freq:16
-ampl:8
-tnum:3018
-x_num:35

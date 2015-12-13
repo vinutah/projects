@@ -1,1 +1,0 @@
-#define predict_2stepAhead_tri(fv0,fv1,fv2) ((0.290345506044*fv0)+(0.337816842636*fv1)+(0.355214055427*fv2))

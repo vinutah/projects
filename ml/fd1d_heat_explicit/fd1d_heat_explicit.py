@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 
+def save_training_data(dep_var, feature_1, feature_2, feature_3):
+    
+    filename = "./data/training/train.svm"
+    with open(filename,'a') as f:
+        line  =         str(dep_var)
+        line += ' 1:' + str(feature_1) 
+        line += ' 2:' + str(feature_2) 
+        line += ' 3:' + str(feature_3)
+        line += '\n'
+        f.write(line)
+
+
 def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h ):
 ## FD1D_HEAT_EXPLICIT: Finite difference solution of 1D heat equation.
 #  Discussion:
@@ -61,7 +73,10 @@ def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h ):
   for c in range ( 1, x_num - 1 ):
     l = c - 1
     r = c + 1
+
+
     h_new[c] = h[c] + cfl * ( h[l] - 2.0 * h[c] + h[r] ) + dt * f[c]
+    save_training_data(h_new[c] , h[l] , h[c] , h[r] )
 
   h_new = bc ( x_num, x, t + dt, h_new )
 

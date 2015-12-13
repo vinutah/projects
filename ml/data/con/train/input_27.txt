@@ -1,5 +1,0 @@
-bval01:6
-bval02:6
-ival:1
-tnum:3011
-x_num:42

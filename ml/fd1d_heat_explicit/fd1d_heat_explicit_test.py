@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 def fd1d_heat_explicit_test ( ):
-# FD1D_HEAT_EXPLICIT_TEST tests the FD1D_HEAT_EXPLICIT library.
+  """fd1d_heat_explicit_test tests the fd1d_heat_explicit library."""
+
   from fd1d_heat_explicit_test01 import fd1d_heat_explicit_test01 
   from fd1d_heat_explicit_test02 import fd1d_heat_explicit_test02
 
@@ -12,9 +13,7 @@ def fd1d_heat_explicit_test ( ):
 
   fd1d_heat_explicit_test01 ( )
   fd1d_heat_explicit_test02 ( )
-#
-#  Terminate.
-#
+
   print ''
   print 'FD1D_HEAT_EXPLICIT_TEST:'
   print '  Normal end of execution.'

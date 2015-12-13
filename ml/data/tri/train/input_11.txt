@@ -1,5 +1,0 @@
-bval01:6
-bval02:6
-ival_max:6
-tnum:3051
-x_num:85

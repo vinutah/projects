@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 def fd1d_heat_explicit_test01 ( ):
-## fd1d_heat_explicit_test01 does a simple test problem
+  """fd1d_heat_explicit_test01 does a simple test problem"""
+
   from fd1d_heat_explicit import fd1d_heat_explicit
   from fd1d_heat_explicit_cfl import fd1d_heat_explicit_cfl
   from r8mat_write import r8mat_write
@@ -20,10 +21,12 @@ def fd1d_heat_explicit_test01 ( ):
   print '    dH/dt - K * d2H/dx2 = f(x,t)'
   print ''
   print '  Run a simple test case.'
-#
-#  Heat coefficient.
-#
+
+  
+  """Heat coefficient"""
+ 
   k = k_test01 ( )
+
 #
 #  X_NUM is the number of equally spaced nodes to use between 0 and 1.
 #
@@ -32,14 +35,16 @@ def fd1d_heat_explicit_test01 ( ):
   x_max = 1.0
   dx = ( x_max - x_min ) / ( x_num - 1 )
   x = np.linspace ( x_min, x_max, x_num )
+
 #
 #  T_NUM is the number of equally spaced time points between 0 and 10.0.
 #
-  t_num = 201
+  t_num = 10001
   t_min = 0.0
   t_max = 80.0
   dt = ( t_max - t_min ) / ( t_num - 1 )
   t = np.linspace ( t_min, t_max, t_num )
+
 #
 #  Get the CFL coefficient.
 #
@@ -64,23 +69,25 @@ def fd1d_heat_explicit_test01 ( ):
     if ( j == 0 ):
       h = ic_test01 ( x_num, x, t[j] )
       h = bc_test01 ( x_num, x, t[j], h )
+      
     else:
       h = fd1d_heat_explicit ( x_num, x, t[j-1], dt, cfl, rhs_test01, bc_test01, h )
+    
     for i in range ( 0, x_num ):
       hmat[i,j] = h[i]
 #
 #  Plot the data.
 #
-  tmat, xmat = np.meshgrid ( t, x )
-  fig = plt.figure ( )
-# ax = fig.add_subplot ( 111, projection = '3d' )
-  ax = Axes3D ( fig )
-  surf = ax.plot_surface ( xmat, tmat, hmat )
-  plt.xlabel ( '<---X--->' )
-  plt.ylabel ( '<---T--->' )
-  plt.title ( 'U(X,T)' )
-  plt.savefig ( 'plot_test01.png' )
-  plt.show ( )
+  #tmat, xmat = np.meshgrid ( t, x )
+  #fig = plt.figure ( )
+  #ax = fig.add_subplot ( 111, projection = '3d' )
+  #ax = Axes3D ( fig )
+  #surf = ax.plot_surface ( xmat, tmat, hmat )
+  #plt.xlabel ( '<---X--->' )
+  #plt.ylabel ( '<---T--->' )
+  #plt.title ( 'U(X,T)' )
+  #plt.savefig ( 'plot_test01.png' )
+  #plt.show ( )
 #
 #  Write the data to files.
 #
@@ -132,12 +139,12 @@ def ic_test01 ( x_num, x, t ):
   return h
 
 def k_test01 ( ):
-# k_test01 evaluates the conductivity for problem 1.
-#    Output, real K, the conducitivity.
-#
-  k = 0.002
-
-  return k
+    """ 
+    k_test01 evaluates the conductivity for problem 1.
+    Output, real K, the conducitivity.
+    """
+    k = 0.002
+    return k
 
 def rhs_test01 ( x_num, x, t ):
 

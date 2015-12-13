@@ -1,6 +1,9 @@
 
 
-all: run clean
+all: mkdir run clean
+
+mkdir:
+	mkdir -p ./data/training/
 
 run:
 	python fd1d_heat_explicit_test.py > fd1d_heat_explicit_test_output.txt

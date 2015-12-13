@@ -6,6 +6,7 @@ if [ $? -ne 0 ]; then
   exit
 fi
 #
-rm *.pyc
+echo "Cleaning up the pyc, created by imports"
+rm -rf *.pyc
 #
 echo "Test program output written to fd1d_heat_explicit_test_output.txt."

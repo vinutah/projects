@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-#*****************************************************************************80
-
 def fd1d_heat_explicit_test ( ):
 # FD1D_HEAT_EXPLICIT_TEST tests the FD1D_HEAT_EXPLICIT library.
   from fd1d_heat_explicit_test01 import fd1d_heat_explicit_test01 

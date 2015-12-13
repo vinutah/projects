@@ -5,7 +5,7 @@
 def fd1d_heat_explicit_test ( ):
 # FD1D_HEAT_EXPLICIT_TEST tests the FD1D_HEAT_EXPLICIT library.
   from fd1d_heat_explicit_test01 import fd1d_heat_explicit_test01 
-  from fd1d_heat_explicit_test03 import fd1d_heat_explicit_test03
+  from fd1d_heat_explicit_test02 import fd1d_heat_explicit_test02
 
   print ''
   print 'FD1D_HEAT_EXPLICIT_TEST:'
@@ -13,7 +13,7 @@ def fd1d_heat_explicit_test ( ):
   print '  Test the FD1D_HEAT_EXPLICIT library.'
 
   fd1d_heat_explicit_test01 ( )
-  fd1d_heat_explicit_test03 ( )
+  fd1d_heat_explicit_test02 ( )
 #
 #  Terminate.
 #

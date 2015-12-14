@@ -8,6 +8,7 @@ import argparse
 
 #for executing system commands
 import os
+import sys
 
 def getErrors(o_list, ml_list):
     sq_error = 0
@@ -69,6 +70,64 @@ def writeError(learner, hyperparameters):
 
     return
 
+
+def getWeights(fvlen,modelfname,weightsFile):
+    l = 0
+    rho = 0.00
+    c = []
+    fv = []
+    fn_coef = []
+    fn = ""
+    svidx=0
+    
+    # Extract values of total_sv, rho and SV
+    # from the SVM model file
+    # Pass 1: Get the index of the variables
+    # from the list content[]
+    fmodel = open(modelfname,'r')
+    content = fmodel.readlines()
+    fmodel.close()
+    for i in range(len(content)):
+      line = content[i].replace('\n','')
+      if "total_sv" in line:
+        l = int(line.split()[1])
+        print "total_sv = " + str(l)
+      elif "rho" in line:
+        rho = float(line.split()[1])
+        print "rho = " + str(rho)
+      elif "SV" in line:
+        svidx = i+1
+        print "SV = " + str(svidx)
+        
+    # Pass 2: Read the values of the variables
+    # from the list content[] using the indices
+    # obatined in pass 1
+    for i in range(svidx,svidx+l):
+      line = content[i].replace('\n','')
+      lnfields = line.split()
+      c.append(float(lnfields[0]))
+      tempfv = []
+      for j in range(1,1+fvlen):
+        tempfv.append(float(lnfields[j].split(':')[1]))
+      fv.append(tempfv)
+    row = len(fv)
+    col = len(fv[row-1])
+    for j in range(col):
+      temp_coef = 0.0
+      for i in range(row):
+        temp_coef = temp_coef + (c[i]*fv[i][j])
+      fn_coef.append(temp_coef)
+
+    with open(weightsFile,'w') as w:
+        line  = str(fn_coef[0])
+        line += '\n'
+        line += str(fn_coef[1])
+        line += '\n'
+        line += str(fn_coef[2])
+        w.write(line)
+    w.close()
+    return
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser( description = "this program defines the user interface of the project\
                                       for the class cs635 machine learning of fall 2015, help pick the best\
@@ -89,7 +148,7 @@ if __name__ == "__main__":
             cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'native'
             os.system(cmd)
 
-    if args.mode  == 'learn':
+    if args.mode  == 'train':
         if args.using == '03_liblinear':
             logging.debug('invoking the LIBLINEAR to learn the solution for the bvp')
             c    = 100
@@ -119,16 +178,39 @@ if __name__ == "__main__":
         
         if args.using == '04_libsvm':
             logging.debug('invoking the LIBSVM liblinear to learn the solution for the bvp')
+            learner = args.using
+            s = 3
+            c = 100
+            p = 0.01
+            e = 0.01
+            t = 0 
+            r = 1
+            g = 1
+            hyperparameters = 's_' + str(s) +'_c_'+ str(c) + '_p_' + str(p) + '_e_' + str(e) + '_t_' + str(t) + '_r_' + str(g)
+            path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
+            cmd = 'mkdir -p ' + str(path) 
+            os.system(cmd)
+            
+            modelFile = path + hyperparameters + '.m'
+            cmd = './learners/04_libsvm/svm-train' +\
+                    ' -s ' + str(s) +' -c '+ str(c) + ' -p ' + str(p) + ' -e ' + str(e) + ' -t ' + str(t) + ' -r ' + str(g) +\
+                    ' ./data/training/train.svm ' +\
+                    str(modelFile)
+            print cmd
+            os.system(cmd)
+
+            weightsFile = path + hyperparameters + '.w'
+            getWeights(3,modelFile,weightsFile)
+            
 
     if args.mode  == 'test':
         if args.using == '03_liblinear':
             logging.debug('invoking the pde solver with learned model')
-            
+            learner = args.using
+            s    = 12
             c    = 100
             p    = 0.000001
             e    = 0.0000001
-            s    = 12
-            learner = args.using
             
             hyperparameters = 's_' + str(s) +'_c_'+ str(c) + '_p_' + str(p) + '_e_' + str(e)
             path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
@@ -145,6 +227,5 @@ if __name__ == "__main__":
 
 """
     if args.mode  == 'cv':
-    if args.mode  == 'train':
 """
 

@@ -3,12 +3,17 @@ python ./utils/run.py -mode original -action solve
 
 CROSS VALIDATION
 
+
 TRAINING PHASE
 Using the Best algorithm and its associated hyperparameters, retrain:
+python ./utils/run.py -mode train -using 01_sgdsvm
+python ./utils/run.py -mode train -using 02_logregr
 python ./utils/run.py -mode train -using 03_liblinear
 python ./utils/run.py -mode train -using 04_libsvm
 
 TESTING PHASE
 Use the weights learned above and report max and mean square Errors.
+python ./utils/run.py -mode test -using 01_sgdsvm
+python ./utils/run.py -mode test -using 02_logregr
 python ./utils/run.py -mode test -using 03_liblinear
 python ./utils/run.py -mode test -using 04_libsvm

@@ -1,0 +1,88 @@
+
+source run.sh
+ `-->this commands runs the basic commands mentioned below that executes the logistic regression classifier
+     on the "astro-original" and "astro-scaled" TEST data set
+
+
+
+
+BASIC COMMANDS TO VERIFY THE RESULTS IN THE REPORT:
+
+ASTRO-ORIGINAL:
+TEST
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+python ./src/logisticRegr/lrClassifier.py --data ./data/astro/original/test --T 80 --rou 0.001 --s 100000 --wname optimal_astro_original --mode test
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+ASTRO-SCALED:
+TEST
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+python ./src/logisticRegr/lrClassifier.py --data ./data/astro/scaled/test --T 80 --rou 0.001 --s 100000 --wname optimal_astro_scaled --mode test
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+DETAILS OF ALL COMMANDS:
+
+ASTRO-ORIGINAL:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TRAIN
+python ./src/logisticRegr/lrClassifier.py --data ./data/astro/original/train --T 80 --rou 0.001 --s 100000 --wname optimal_astro_original --mode train
+
+PLOT-NEGATIVE-LOG-LIKELIHOOD:
+python ./src/logisticRegr/lrClassifier.py --data ./data/astro/original/train --T 80 --rou 0.001 --s 100000 --wname optimal_astro_original --mode plot
+
+TEST
+python ./src/logisticRegr/lrClassifier.py --data ./data/astro/original/test --T 80 --rou 0.001 --s 100000 --wname optimal_astro_original --mode test
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+ASTRO-SCALED:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TRAIN
+python ./src/logisticRegr/lrClassifier.py --data ./data/astro/scaled/train --T 80 --rou 0.001 --s 100000 --wname optimal_astro_scaled --mode train
+
+PLOT-NEGATIVE-LOG-LIKELIHOOD:
+python ./src/logisticRegr/lrClassifier.py --data ./data/astro/scaled/train --T 80 --rou 0.001 --s 100000 --wname optimal_astro_scaled --mode plot
+
+TEST
+python ./src/logisticRegr/lrClassifier.py --data ./data/astro/scaled/test --T 80 --rou 0.001 --s 100000 --wname optimal_astro_scaled --mode test
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Cross Validaiton:
+Fold = 10
+
+Hyper Parameters
+1. Epochs, T Fixed to 80
+2. Sigma,  s
+2. learning rate r = f(rou,s)
+
+The rule for SGD to have any gurantees is that 
+The learning rate is not summable    sum (t=1 to infinity) r_t   = infinity
+The learning rate is square summable sum (t=1 to infinity) r_t^2 < infinity
+r(t, rou) = rou / (1 + rou*t/sigma^2)
+
+Search Space for Hyper Parameters
+1. T_range     = [80]
+2. s_range     = [100,    1000,  10000,  100000]
+3. rou_range   = [0.001,0.0001,0.00001,0.000001]
+
+Commands used to perform cross-validation:
+
+ASTRO-ORIGINAL:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+python ./src/logisticRegr/lrClassifier.py --mode cv --v 10 --data ./data/astro/original/train --wname astro_original
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+ASTRO-SCALED:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+python ./src/logisticRegr/lrClassifier.py --mode cv --v 10 --data ./data/astro/scaled/train --wname astro_scaled
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

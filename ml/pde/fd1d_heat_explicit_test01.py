@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-def fd1d_heat_explicit_test01(path):
+def fd1d_heat_explicit_test01(path,mode,weightsFile):
   """fd1d_heat_explicit_test01 does a simple test problem"""
 
   from fd1d_heat_explicit import fd1d_heat_explicit
@@ -71,7 +71,7 @@ def fd1d_heat_explicit_test01(path):
       h = bc_test01 ( x_num, x, t[j], h )
       
     else:
-      h = fd1d_heat_explicit ( x_num, x, t[j-1], dt, cfl, rhs_test01, bc_test01, h )
+      h = fd1d_heat_explicit ( x_num, x, t[j-1], dt, cfl, rhs_test01, bc_test01, h, mode, weightsFile )
     
     for i in range ( 0, x_num ):
       hmat[i,j] = h[i]
@@ -95,10 +95,10 @@ def fd1d_heat_explicit_test01(path):
 #
   filename = str(save_at) + 'h_test01.txt'
   r8mat_write ( filename, x_num, t_num, hmat )
-  filename = str(save_at) + 't_test01.txt'
-  r8vec_write ( filename, t_num, t )
-  filename = str(save_at) + 'x_test01.txt'
-  r8vec_write ( filename, x_num, x )
+  #filename = str(save_at) + 't_test01.txt'
+  #r8vec_write ( filename, t_num, t )
+  #filename = str(save_at) + 'x_test01.txt'
+  #r8vec_write ( filename, x_num, x )
 
   print ''
   print '  H(X,T) written to "h_test01.txt"'
@@ -167,6 +167,7 @@ def rhs_test01 ( x_num, x, t ):
 if ( __name__ == '__main__' ):
   from timestamp import timestamp
   timestamp ( )
-  fd1d_heat_explicit_test01 ( )
+  fd1d_heat_explicit_test01 (path, mode, weightsFile)
+
   timestamp ( )
 

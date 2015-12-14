@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
+
 def save_training_data(dep_var, feature_1, feature_2, feature_3):
-    
     filename = "./data/training/train.svm"
     with open(filename,'a') as f:
         line  =         str(dep_var)
@@ -12,58 +12,16 @@ def save_training_data(dep_var, feature_1, feature_2, feature_3):
         f.write(line)
 
 
-def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h ):
-## FD1D_HEAT_EXPLICIT: Finite difference solution of 1D heat equation.
-#  Discussion:
-#
-#    This program takes one time step to solve the 1D heat equation 
-#    with an explicit method.
-#
-#    This program solves
-#
-#      dUdT - k * d2UdX2 = F(X,T)
-#
-#    over the interval [A,B] with boundary conditions
-#
-#      U(A,T) = UA(T),
-#      U(B,T) = UB(T),
-#
-#    over the time interval [T0,T1] with initial conditions
-#
-#      U(X,T0) = U0(X)
-#
-#    The code uses the finite difference method to approximate the
-#    second derivative in space, and an explicit forward Euler approximation
-#    to the first derivative in time.
-#
-#    The finite difference form can be written as
-#
-#      U(X,T+dt) - U(X,T)                  ( U(X-dx,T) - 2 U(X,T) + U(X+dx,T) )
-#      ------------------  = F(X,T) + k *  ------------------------------------
-#               dt                                   dx * dx
-#
-#    or, assuming we have solved for all values of U at time T, we have
-#
-#      U(X,T+dt) = U(X,T) + cfl * ( U(X-dx,T) - 2 U(X,T) + U(X+dx,T) ) + dt * F(X,T) 
-#
-#    Here "cfl" is the Courant-Friedrichs-Loewy coefficient:
-#
-#      cfl = k * dt / dx / dx
-#
-#    In order for accurate results to be computed by this explicit method,
-#    the CFL coefficient must be less than 0.5!
-#
-#    Input, integer X_NUM, the number of points to use in the spatial dimension.
-#    Input, real X(X_NUM,1), the coordinates of the nodes.
-#    Input, real T, the current time.
-#    Input, real DT, the size of the time step.
-#    Input, real CFL, the Courant-Friedrichs-Loewy coefficient,
-#    computed by FD1D_HEAT_EXPLICIT_CFL.
-#    Input, real H(X_NUM,1), the solution at the current time.
-#    Input, @RHS, the function which evaluates the right hand side.
-#    Input, @BC, the function which evaluates the boundary conditions.
-#    Output, real H_NEW(X_NUM,1), the solution at time T+DT.
-#
+def readweights(weightsFile,w):
+    with open(weightsFile,'r') as f:
+        W = f.readlines()
+        w.append(W[-1].strip())
+        w.append(W[-2].strip())
+        w.append(W[-3].strip())
+    f.close()
+    return w
+
+def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h, mode , weightsFile):
   import numpy as np
 
   h_new = np.zeros ( x_num )
@@ -75,9 +33,31 @@ def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h ):
     r = c + 1
 
 
-    h_new[c] = h[c] + cfl * ( h[l] - 2.0 * h[c] + h[r] ) + dt * f[c]
-    save_training_data(h_new[c] , h[l] , h[c] , h[r] )
+    if mode == 'native': 
+        h_new[c] = h[c] + cfl * ( h[l] - 2.0 * h[c] + h[r] ) + dt * f[c]
+        save_training_data(h_new[c] , h[l] , h[c] , h[r] )
 
+    if mode == 'ml_model':
+        w = list()
+        w = readweights(weightsFile,w)
+        print 'w[0]=%f' % ( float(str(w[0])) )
+        print 'w[1]=%f' % ( float(str(w[1])) )
+        print 'w[2]=%f' % ( float(str(w[2])) )
+        
+        print 'h[l]=%f' % ( float(str(h[l])) )
+        print 'h[c]=%f' % ( float(str(h[c])) )
+        print 'h[r]=%f' % ( float(str(h[r])) )
+
+        w1 =  float(str(w[0]))
+        w2 =  float(str(w[1]))
+        w3 =  float(str(w[2]))
+        
+        f1 =  float(str(h[l]))
+        f2 =  float(str(h[c]))
+        f3 =  float(str(h[r]))
+
+        h_new[c] = w1*f1 + w2*f2 + w3*f3
+    
   h_new = bc ( x_num, x, t + dt, h_new )
 
   return h_new

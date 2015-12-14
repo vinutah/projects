@@ -1,0 +1,11 @@
+ORIGINAL
+python ./utils/run.py -mode original -action solve
+
+VIEW 
+open ./data/solutions/original/plot_test01.png
+
+LEARNING
+python ./utils/run.py -mode learn -using 03_liblinear
+
+TESTING
+python ./utils/run.py -mode test -using 03_liblinear

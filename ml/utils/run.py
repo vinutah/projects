@@ -221,9 +221,30 @@ if __name__ == "__main__":
             print cmd
             os.system(cmd)
 
-        """ calculate errors between the generated solutions """
-        writeError(learner, hyperparameters)
+            """ calculate errors between the generated solutions """
+            writeError(learner, hyperparameters)
 
+        if args.using == '04_libsvm':
+            logging.debug('invoking the pde solver with learned model')
+            learner = args.using
+            s = 3
+            c = 100
+            p = 0.01
+            e = 0.01
+            t = 0 
+            r = 1
+            g = 1
+            hyperparameters = 's_' + str(s) +'_c_'+ str(c) + '_p_' + str(p) + '_e_' + str(e) + '_t_' + str(t) + '_r_' + str(g)
+            path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
+
+            weightsFile = path + hyperparameters + '.w'
+            
+            cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
+            print cmd
+            os.system(cmd)
+
+            """ calculate errors between the generated solutions """
+            writeError(learner, hyperparameters)
 
 """
     if args.mode  == 'cv':

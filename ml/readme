@@ -1,13 +1,14 @@
-ORIGINAL
+ORIGINAL FUNCTION
 python ./utils/run.py -mode original -action solve
 
-VIEW 
-open ./data/solutions/original/plot_test01.png
+CROSS VALIDATION
 
-TRAIN
+TRAINING PHASE
+Using the Best algorithm and its associated hyperparameters, retrain:
 python ./utils/run.py -mode train -using 03_liblinear
 python ./utils/run.py -mode train -using 04_libsvm
 
-TEST
+TESTING PHASE
+Use the weights learned above and report max and mean square Errors.
 python ./utils/run.py -mode test -using 03_liblinear
-python ./utils/run.py -mode test -using 03_libsvm
+python ./utils/run.py -mode test -using 04_libsvm

@@ -40,13 +40,13 @@ def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h, mode , weightsFile):
     if mode == 'ml_model':
         w = list()
         w = readweights(weightsFile,w)
-        print 'w[0]=%f' % ( float(str(w[0])) )
-        print 'w[1]=%f' % ( float(str(w[1])) )
-        print 'w[2]=%f' % ( float(str(w[2])) )
-        
-        print 'h[l]=%f' % ( float(str(h[l])) )
-        print 'h[c]=%f' % ( float(str(h[c])) )
-        print 'h[r]=%f' % ( float(str(h[r])) )
+        #print 'w[0]=%f' % ( float(str(w[0])) )
+        #print 'w[1]=%f' % ( float(str(w[1])) )
+        #print 'w[2]=%f' % ( float(str(w[2])) )
+        #
+        #print 'h[l]=%f' % ( float(str(h[l])) )
+        #print 'h[c]=%f' % ( float(str(h[c])) )
+        #print 'h[r]=%f' % ( float(str(h[r])) )
 
         w1 =  float(str(w[0]))
         w2 =  float(str(w[1]))

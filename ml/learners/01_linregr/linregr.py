@@ -2,7 +2,7 @@
 __author__ = 'vinu joseph'
 
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 #logging.basicConfig(filename='debug.log',level=logging.DEBUG)
 
 import argparse
@@ -65,14 +65,14 @@ def linregr_train(X,T,s,rou):
             xi = list()
             for features in range(len(x_i)):
                 xi.append(x_i[features].split(':')[-1])
-            logging.debug(xi)
+            #logging.debug(xi)
             
             """ find the w dot x for this example """
-            logging.debug( "length of xi is : %d", len(xi) ) 
+            #logging.debug( "length of xi is : %d", len(xi) ) 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             wTxi = sum( [ float(w[f]) * float(xi[f]) for f in range(len(xi)) ]  )
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            logging.debug(wTxi)
+            #logging.debug(wTxi)
 
             """ 
             now here's the real deal !
@@ -88,26 +88,26 @@ def linregr_train(X,T,s,rou):
             for x in xi:
                 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                factor = float(r) * float(c) * float(yi -  wTxi)
+                factor = float(r) * float(yi -  wTxi)
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                logging.debug('factor:%f',factor) 
+                #logging.debug('factor:%f',factor) 
 
                 xi_scaled.append( factor * float(x) )
-                logging.debug(xi_scaled)
+                #logging.debug(xi_scaled)
 
             for wt in w:
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                factor = 1 - (float(r))
+                factor = 1 - (float(r) * float(c))
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                logging.debug('r     :%f',r)
-                logging.debug('c     :%f',c)
-                logging.debug('factor:%f',factor)
+                #logging.debug('r     :%f',r)
+                #logging.debug('c     :%f',c)
+                #logging.debug('factor:%f',factor)
 
                 w_scaled.append( float(factor) * float(wt) )
-                logging.debug(w_scaled)
+                #logging.debug(w_scaled)
 
             w_new = sum( [w_scaled,xi_scaled], axis=0)
-            logging.debug(w_new)
+            #logging.debug(w_new)
 
             w = w_new
             t = t + 1

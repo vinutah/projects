@@ -73,9 +73,32 @@ def writeError(learner, hyperparameters):
 
     return
 
-def linregr():
+def linregr(T,c,rou,mode):
     """method for invoking the linear regression with hyperparameters"""
-    logging.debug("test %d" % ( 1 ) )
+    logging.debug("hp: T=%d c=%f rou=%f" % ( T,c,rou ) )
+
+    learner = "01_linregr"
+    hyperparameters = 'c_' + str(c) +'_rou_'+ str(rou)
+    path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
+    cmd = 'mkdir -p ' + str(path) 
+    os.system(cmd)
+
+    weightsFile = path + hyperparameters + '.w'
+    
+    if mode == 'train':
+        cmd = 'python ./learners/01_linregr/linregr.py'+\
+              ' -T ' + str(T) + ' -c ' + str(c) + ' -rou ' + str(rou) + \
+              ' -mode '  + str(mode) + ' -data ' + str('./data/training/train.svm') + \
+              ' -wname ' + str(weightsFile)
+        print cmd
+        os.system(cmd)
+   
+    if mode == 'test':
+        cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
+        print cmd
+        os.system(cmd)
+        writeError(learner, hyperparameters)
+
     return
 
 def liblinear(s,p,e,c,mode):
@@ -220,6 +243,10 @@ if __name__ == "__main__":
         if args.using == '01_linregr':
             logging.debug('invoking our linear regression to learn the solution for the bvp')
             logging.info(' L2 regularized linear regression is also called Ridge regression')
+            T    = 30
+            c    = 1
+            rou  = 0.0001
+            linregr(T,c,rou,mode)
 
 
         if args.using == '02_liblinear':
@@ -245,6 +272,13 @@ if __name__ == "__main__":
 
     if args.mode  == 'test':
         mode = 'test'
+
+        if args.using == '01_linregr':
+            T    = 30
+            c    = 1
+            rou  = 0.0001
+            linregr(T,c,rou,mode)
+
         if args.using == '02_liblinear':
             logging.debug('invoking the pde solver with learned model')
             s    = 12
@@ -268,8 +302,8 @@ if __name__ == "__main__":
             
 
     if args.mode  == 'cv':
-                    for training, validation in kFoldCrossValidation(X, K):
-	                #for x in X: assert (x in training) ^ (x in validation), x
-	                for x in X: next 
-                        lrClassifier_train(training,T,s,rou)
-                        acc += lrClassifier_test(validation,T,s,rou)
+        for training, validation in kFoldCrossValidation(X, K):
+	    #for x in X: assert (x in training) ^ (x in validation), x
+	    for x in X: next 
+            lrClassifier_train(training,T,s,rou)
+            acc += lrClassifier_test(validation,T,s,rou)

@@ -10,6 +10,13 @@ import argparse
 import os
 import sys
 
+
+def kFoldCrossValidation(X,K):
+    for k in xrange(K):
+        training   = [x for i, x in enumerate(X) if i % K != k]
+        validation = [x for i, x in enumerate(X) if i % K == k]
+        yield training, validation
+
 def getErrors(o_list, ml_list):
     sq_error = 0
     sum_sq_error = 0
@@ -260,7 +267,9 @@ if __name__ == "__main__":
             libsvm(s,p,e,c,g,r,t,mode)
             
 
-"""
     if args.mode  == 'cv':
-"""
-
+                    for training, validation in kFoldCrossValidation(X, K):
+	                #for x in X: assert (x in training) ^ (x in validation), x
+	                for x in X: next 
+                        lrClassifier_train(training,T,s,rou)
+                        acc += lrClassifier_test(validation,T,s,rou)

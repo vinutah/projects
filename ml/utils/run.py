@@ -149,7 +149,12 @@ if __name__ == "__main__":
             os.system(cmd)
 
     if args.mode  == 'train':
-        if args.using == '01_liblinear':
+        if args.using == '01_linregr':
+            logging.debug('invoking our linear regression to learn the solution for the bvp')
+            logging.info(' L2 regularized linear regression is also called Ridge regression')
+
+
+        if args.using == '02_liblinear':
             logging.debug('invoking the LIBLINEAR to learn the solution for the bvp')
             c    = 100
             p    = 0.000001
@@ -163,7 +168,7 @@ if __name__ == "__main__":
             os.system(cmd)
 
             weightsFile = path + hyperparameters + '.m'
-            cmd = './learners/03_liblinear/train' +\
+            cmd = './learners/02_liblinear/train' +\
                     ' -s ' + str(s) + ' -c ' + str(c) + ' -p ' + str(p) + ' -e ' + str(e) +\
                     ' ./data/training/train.svm ' +\
                     str(weightsFile)
@@ -171,7 +176,7 @@ if __name__ == "__main__":
             os.system(cmd)
         
         
-        if args.using == '02_libsvm':
+        if args.using == '03_libsvm':
             logging.debug('invoking the LIBSVM liblinear to learn the solution for the bvp')
             learner = args.using
             s = 3
@@ -187,7 +192,7 @@ if __name__ == "__main__":
             os.system(cmd)
             
             modelFile = path + hyperparameters + '.m'
-            cmd = './learners/04_libsvm/svm-train' +\
+            cmd = './learners/03_libsvm/svm-train' +\
                     ' -s ' + str(s) +' -c '+ str(c) + ' -p ' + str(p) + ' -e ' + str(e) + ' -t ' + str(t) + ' -r ' + str(g) +\
                     ' ./data/training/train.svm ' +\
                     str(modelFile)
@@ -197,13 +202,10 @@ if __name__ == "__main__":
             weightsFile = path + hyperparameters + '.w'
             getWeights(3,modelFile,weightsFile)
             
-        if args.using == '03_linregr':
-            logging.debug('invoking our linear regression to learn the solution for the bvp')
-            logging.info(' L2 regularized linear regression is also called Ridge regression')
             
 
     if args.mode  == 'test':
-        if args.using == '01_liblinear':
+        if args.using == '02_liblinear':
             logging.debug('invoking the pde solver with learned model')
             learner = args.using
             s    = 12
@@ -223,7 +225,7 @@ if __name__ == "__main__":
             """ calculate errors between the generated solutions """
             writeError(learner, hyperparameters)
 
-        if args.using == '02_libsvm':
+        if args.using == '03_libsvm':
             logging.debug('invoking the pde solver with learned model')
             learner = args.using
             s = 3

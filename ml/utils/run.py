@@ -29,10 +29,6 @@ def getErrors(o_list, ml_list):
 
 def writeError(learner, hyperparameters):
     
-    """
-    original "solution : ./data/solutions/original/h_test01.txt 
-    learned  solution  : ./data/solutions/03_liblinear/s_12_c_100_p_1e-06_e_1e-07/h_test01.txt  
-    """
     path        = './data/solutions/'
     output      = 'h_test01.txt'
 
@@ -70,7 +66,71 @@ def writeError(learner, hyperparameters):
 
     return
 
+def linregr():
+    """method for invoking the linear regression with hyperparameters"""
+    logging.debug("test %d" % ( 1 ) )
+    return
 
+def liblinear(s,p,e,c,mode):
+    """method for invoking the lib linear with hyperparameters"""
+    logging.debug("hp: s=%f p=%f e=%f c=%f" % ( s,p,e,c ) )
+    
+    learner = "02_liblinear"
+
+    hyperparameters = 's_' + str(s) +'_p_'+ str(p) + '_e_' + str(e) + '_c_' + str(c)
+    path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
+    cmd = 'mkdir -p ' + str(path) 
+    os.system(cmd)
+
+    weightsFile = path + hyperparameters + '.m'
+    
+    if mode == 'train':
+        cmd = './learners/02_liblinear/train' +\
+                ' -s ' + str(s) + ' -p ' + str(p) + ' -e ' + str(e) + ' -c ' + str(c) +\
+                ' ./data/training/train.svm ' +\
+                str(weightsFile)
+        print cmd
+        os.system(cmd)
+   
+    if mode == 'test':
+        cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
+        print cmd
+        os.system(cmd)
+        writeError(learner, hyperparameters)
+
+    return
+
+def libsvm(s,p,e,c,g,r,t,mode):
+    """method for invoking the lib svm with hyperparameters"""
+    logging.debug("hp: s=%f p=%f e=%f c=%f g=%f r=%f t=%f" % ( s,p,e,c,g,r,t ) )
+    
+    learner = "03_libsvm"
+    
+    hyperparameters = 's_' + str(s) +'_p_'+ str(p) + '_e_' + str(e) + '_c_' + str(c) + '_g_' + str(g) + '_r_' + str(r) + '_t_' + str(t)
+    path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
+    cmd = 'mkdir -p ' + str(path) 
+    os.system(cmd)
+    
+    modelFile = path + hyperparameters + '.m'
+    weightsFile = path + hyperparameters + '.w'
+
+    if mode == "train":
+        cmd = './learners/03_libsvm/svm-train' +\
+                ' -s ' + str(s) +' -p '+ str(p) + ' -e ' + str(e) + ' -c ' + str(c) + ' -g ' + str(g) + ' -r ' + str(r) + ' -t ' + str('t') +\
+                ' ./data/training/train.svm ' +\
+                str(modelFile)
+        print cmd
+        os.system(cmd)
+        getWeights(3,modelFile,weightsFile)
+    
+    if mode == "test":
+        cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
+        print cmd
+        os.system(cmd)
+        writeError(learner, hyperparameters)
+
+    return
+    
 def getWeights(fvlen,modelfname,weightsFile):
     l = 0
     rho = 0.00
@@ -135,8 +195,8 @@ if __name__ == "__main__":
 
     parser.add_argument("-mode",   help='name of the mode    ',required=True)
     parser.add_argument("-action", help='name of the action to be performed',required=False)
-    
     parser.add_argument("-using",  help='name of the learner ',required=False)
+    
     args = parser.parse_args()
 
     if args.mode  == 'original':
@@ -149,6 +209,7 @@ if __name__ == "__main__":
             os.system(cmd)
 
     if args.mode  == 'train':
+        mode = 'train'
         if args.using == '01_linregr':
             logging.debug('invoking our linear regression to learn the solution for the bvp')
             logging.info(' L2 regularized linear regression is also called Ridge regression')
@@ -156,74 +217,35 @@ if __name__ == "__main__":
 
         if args.using == '02_liblinear':
             logging.debug('invoking the LIBLINEAR to learn the solution for the bvp')
-            c    = 100
+            s    = 12
             p    = 0.000001
             e    = 0.0000001
-            s    = 12
-            learner = args.using
-
-            hyperparameters = 's_' + str(s) +'_c_'+ str(c) + '_p_' + str(p) + '_e_' + str(e)
-            path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
-            cmd = 'mkdir -p ' + str(path) 
-            os.system(cmd)
-
-            weightsFile = path + hyperparameters + '.m'
-            cmd = './learners/02_liblinear/train' +\
-                    ' -s ' + str(s) + ' -c ' + str(c) + ' -p ' + str(p) + ' -e ' + str(e) +\
-                    ' ./data/training/train.svm ' +\
-                    str(weightsFile)
-            print cmd
-            os.system(cmd)
+            c    = 100
+            liblinear(s,p,e,c,mode)
         
         
         if args.using == '03_libsvm':
             logging.debug('invoking the LIBSVM liblinear to learn the solution for the bvp')
-            learner = args.using
             s = 3
-            c = 100
             p = 0.01
             e = 0.01
-            t = 0 
-            r = 1
+            c = 100
             g = 1
-            hyperparameters = 's_' + str(s) +'_c_'+ str(c) + '_p_' + str(p) + '_e_' + str(e) + '_t_' + str(t) + '_r_' + str(g)
-            path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
-            cmd = 'mkdir -p ' + str(path) 
-            os.system(cmd)
-            
-            modelFile = path + hyperparameters + '.m'
-            cmd = './learners/03_libsvm/svm-train' +\
-                    ' -s ' + str(s) +' -c '+ str(c) + ' -p ' + str(p) + ' -e ' + str(e) + ' -t ' + str(t) + ' -r ' + str(g) +\
-                    ' ./data/training/train.svm ' +\
-                    str(modelFile)
-            print cmd
-            os.system(cmd)
-
-            weightsFile = path + hyperparameters + '.w'
-            getWeights(3,modelFile,weightsFile)
-            
+            r = 1
+            t = 0 
+            libsvm(s,p,e,c,g,r,t,mode)
             
 
     if args.mode  == 'test':
+        mode = 'test'
         if args.using == '02_liblinear':
             logging.debug('invoking the pde solver with learned model')
-            learner = args.using
             s    = 12
             c    = 100
             p    = 0.000001
             e    = 0.0000001
+            liblinear(s,p,e,c,mode)
             
-            hyperparameters = 's_' + str(s) +'_c_'+ str(c) + '_p_' + str(p) + '_e_' + str(e)
-            path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
-
-            weightsFile = path + hyperparameters + '.m'
-            
-            cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
-            print cmd
-            os.system(cmd)
-
-            """ calculate errors between the generated solutions """
-            writeError(learner, hyperparameters)
 
         if args.using == '03_libsvm':
             logging.debug('invoking the pde solver with learned model')
@@ -235,17 +257,8 @@ if __name__ == "__main__":
             t = 0 
             r = 1
             g = 1
-            hyperparameters = 's_' + str(s) +'_c_'+ str(c) + '_p_' + str(p) + '_e_' + str(e) + '_t_' + str(t) + '_r_' + str(g)
-            path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
-
-            weightsFile = path + hyperparameters + '.w'
+            libsvm(s,p,e,c,g,r,t,mode)
             
-            cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
-            print cmd
-            os.system(cmd)
-
-            """ calculate errors between the generated solutions """
-            writeError(learner, hyperparameters)
 
 """
     if args.mode  == 'cv':

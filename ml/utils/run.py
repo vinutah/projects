@@ -238,6 +238,44 @@ if __name__ == "__main__":
             cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'native'
             os.system(cmd)
 
+    if args.mode  == 'cv':
+        svmFile = ./data/training/train.svm
+        with open(svmFile) as f:
+            X = f.readlines()
+
+        K = int(args.v)
+        logging.info('initiating %d-fold cross validation',K)
+        
+        cmd = 'mkdir -p ./data/cv_results/'
+        os.system(cmd)
+        
+        cvResultName = str('./data/cv_results/') + str(weightsFilePrefix) + str('_cv.csv')
+        with open(cvResultName,'w') as f:
+            header = str('Epochs,sigma,learningRate,cvAccuracy\n')
+            f.write(header)
+
+            T_range     = [80]
+            s_range     = [100,    1000,  10000,  100000]
+            rou_range   = [0.001,0.0001,0.00001,0.000001]
+
+        for T in T_range:
+            for s in s_range:
+                for rou in rou_range:
+
+            for training, validation in kFoldCrossValidation(X, K):
+	        #for x in X: assert (x in training) ^ (x in validation), x
+	        for x in X: next
+                mode = 'train' 
+                lrClassifier(training,T,s,rou,mode)
+                mode = 'test'
+                lrClassifier(validation,T,s,rou,mode)
+
+        with open(cvResultName,'a') as f:
+            cv_result = str(T) + str(',') + str(s) + str(',') + str(rou) + str(',') + str(acc_cv) + str(',') + str('\n')
+            f.write(cv_result)
+
+
+
     if args.mode  == 'train':
         mode = 'train'
         if args.using == '01_linregr':
@@ -301,9 +339,3 @@ if __name__ == "__main__":
             libsvm(s,p,e,c,g,r,t,mode)
             
 
-    if args.mode  == 'cv':
-        for training, validation in kFoldCrossValidation(X, K):
-	    #for x in X: assert (x in training) ^ (x in validation), x
-	    for x in X: next 
-            lrClassifier_train(training,T,s,rou)
-            acc += lrClassifier_test(validation,T,s,rou)

@@ -220,7 +220,7 @@ if __name__ == "__main__":
     
         learner = '01_linregr'
         logging.debug("initiating cv..")
-        K = 2
+        K = 5
 
         cvResultName = str('./data/cv_results/') + str('cvr.csv')
         with open(cvResultName,'w') as f:

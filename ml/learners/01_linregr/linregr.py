@@ -227,9 +227,9 @@ if __name__ == "__main__":
             header = str('learner,hyperparameters,max_error,mse_error\n')
             f.write(header)
 
-        T_range     = [0]
-        c_range     = [1]  
-        rou_range   = [0.0001]
+        T_range     = [20]
+        c_range     = [1,2,3,4,5,6]  
+        rou_range   = [0.0001,0.0002,0.0003,0.0004]
 
         maxError  = list()
         meanSqError = list()

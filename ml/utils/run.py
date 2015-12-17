@@ -251,7 +251,6 @@ if __name__ == "__main__":
             cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'native'
             os.system(cmd)
 
-<<<<<<< HEAD
     if args.mode == 'cv':
         logging.debug('invoking 10-fold cross validation for 01_linregr')
         
@@ -276,8 +275,6 @@ if __name__ == "__main__":
             logging.debug('invoking 10-fold cross validation for 03_libsvm')
 
 
-=======
->>>>>>> 28844e527432c526f0cdce9d20393385f129d516
     if args.mode  == 'train':
         mode = 'train'
         if args.using == '01_linregr':

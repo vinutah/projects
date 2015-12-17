@@ -2,6 +2,7 @@ ORIGINAL FUNCTION
 python ./utils/run.py -mode original -action solve
 
 CROSS VALIDATION
+python ./utils/run.py -mode cv -using 01_linregr -v 10
 
 
 TRAINING PHASE

@@ -11,12 +11,6 @@ import os
 import sys
 
 
-def kFoldCrossValidation(X,K):
-    for k in xrange(K):
-        training   = [x for i, x in enumerate(X) if i % K != k]
-        validation = [x for i, x in enumerate(X) if i % K == k]
-        yield training, validation
-
 def getErrors(o_list, ml_list):
     sq_error = 0
     sum_sq_error = 0
@@ -34,7 +28,7 @@ def getErrors(o_list, ml_list):
     return maxE, mSE
 
 
-def writeError(learner, hyperparameters):
+def writeError(learner, hyperparameters, mode):
     
     path        = './data/solutions/'
     output      = 'h_test01.txt'
@@ -70,8 +64,27 @@ def writeError(learner, hyperparameters):
         line = str(maxError) + str(" ") + str(meanSqError) + "\n"
         e.write(line)
     e.close()        
-
+    
     return
+
+"""
+    if mode == "test_cv":
+        path        = './data/cv_results/'
+        cv_results  = path + 'cv_results' + '.csv'
+
+        with open(cv_results,'a') as c:
+            line  = str(learner)
+            line += ','
+            line += str(hyperparameters) 
+            line += ','
+            line += str(maxError)
+            line += ','
+            line += str(meanSqError)
+            line += '\n'
+            c.write(line)
+        c.close()
+"""
+
 
 def linregr(T,c,rou,mode):
     """method for invoking the linear regression with hyperparameters"""
@@ -85,7 +98,7 @@ def linregr(T,c,rou,mode):
 
     weightsFile = path + hyperparameters + '.w'
     
-    if mode == 'train':
+    if mode == 'train' or mode == 'train_cv' :
         cmd = 'python ./learners/01_linregr/linregr.py'+\
               ' -T ' + str(T) + ' -c ' + str(c) + ' -rou ' + str(rou) + \
               ' -mode '  + str(mode) + ' -data ' + str('./data/training/train.svm') + \
@@ -93,11 +106,11 @@ def linregr(T,c,rou,mode):
         print cmd
         os.system(cmd)
    
-    if mode == 'test':
+    if mode == 'test' or mode == 'test_cv' :
         cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
         print cmd
         os.system(cmd)
-        writeError(learner, hyperparameters)
+        writeError(learner, hyperparameters, mode)
 
     return
 
@@ -126,7 +139,7 @@ def liblinear(s,p,e,c,mode):
         cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
         print cmd
         os.system(cmd)
-        writeError(learner, hyperparameters)
+        writeError(learner, hyperparameters, mode)
 
     return
 
@@ -157,7 +170,7 @@ def libsvm(s,p,e,c,g,r,t,mode):
         cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
         print cmd
         os.system(cmd)
-        writeError(learner, hyperparameters)
+        writeError(learner, hyperparameters, mode)
 
     return
     
@@ -238,42 +251,28 @@ if __name__ == "__main__":
             cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'native'
             os.system(cmd)
 
-    if args.mode  == 'cv':
-        svmFile = ./data/training/train.svm
-        with open(svmFile) as f:
-            X = f.readlines()
-
-        K = int(args.v)
-        logging.info('initiating %d-fold cross validation',K)
+    if args.mode == 'cv':
+        logging.debug('invoking 10-fold cross validation for 01_linregr')
         
         cmd = 'mkdir -p ./data/cv_results/'
         os.system(cmd)
         
-        cvResultName = str('./data/cv_results/') + str(weightsFilePrefix) + str('_cv.csv')
-        with open(cvResultName,'w') as f:
-            header = str('Epochs,sigma,learningRate,cvAccuracy\n')
-            f.write(header)
+        if args.using == '01_linregr':
+            # dummy hyperparameters
+            # the learner to use ranges of hyperparameters
+            # and printout the cv errors 
+            T=0
+            c=0
+            rou=0            
+            mode = 'train_cv'
+            linregr(T,c,rou,mode)
 
-            T_range     = [80]
-            s_range     = [100,    1000,  10000,  100000]
-            rou_range   = [0.001,0.0001,0.00001,0.000001]
 
-        for T in T_range:
-            for s in s_range:
-                for rou in rou_range:
+        if args.using == '02_liblinear':
+            logging.debug('invoking 10-fold cross validation for 02_liblinear')
 
-            for training, validation in kFoldCrossValidation(X, K):
-	        #for x in X: assert (x in training) ^ (x in validation), x
-	        for x in X: next
-                mode = 'train' 
-                lrClassifier(training,T,s,rou,mode)
-                mode = 'test'
-                lrClassifier(validation,T,s,rou,mode)
-
-        with open(cvResultName,'a') as f:
-            cv_result = str(T) + str(',') + str(s) + str(',') + str(rou) + str(',') + str(acc_cv) + str(',') + str('\n')
-            f.write(cv_result)
-
+        if args.using == '03_libsvm':
+            logging.debug('invoking 10-fold cross validation for 03_libsvm')
 
 
     if args.mode  == 'train':
@@ -281,7 +280,7 @@ if __name__ == "__main__":
         if args.using == '01_linregr':
             logging.debug('invoking our linear regression to learn the solution for the bvp')
             logging.info(' L2 regularized linear regression is also called Ridge regression')
-            T    = 30
+            T    = 3
             c    = 1
             rou  = 0.0001
             linregr(T,c,rou,mode)

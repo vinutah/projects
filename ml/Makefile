@@ -3,3 +3,6 @@ clean_pyc:
 
 clean_data:
 	rm -rf ./data/solutions 
+	python ./utils/run.py -mode original -action solve
+	
+	rm -rf ./data/cv_results

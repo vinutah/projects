@@ -23,6 +23,78 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
+def kFoldCrossValidation(X,K):
+    for k in xrange(K):
+        training   = [x for i, x in enumerate(X) if i % K != k]
+        validation = [x for i, x in enumerate(X) if i % K == k]
+        yield training, validation
+
+def readweights(weightsFile,w):
+    with open(weightsFile,'r') as f:
+        W = f.readlines()
+        w.append(W[-1].strip())
+        w.append(W[-2].strip())
+        w.append(W[-3].strip())
+    f.close()
+    return w
+
+def getErrors(o_list, ml_list):
+    sq_error = 0
+    sum_sq_error = 0
+    mse = 0
+    error = list()
+    for i in range(len(o_list)):
+        error.append(float(o_list[i]) - float(ml_list[i]))
+    maxE= max(error)
+    
+    for i in range(len(o_list)):
+        sq_error = error[i] * error[i]
+        sum_sq_error += sq_error
+    mSE = float(sum_sq_error) / len(o_list)
+    
+    return maxE, mSE
+
+def linregr_test(X,T,s,rou):
+    """
+    read weights
+    predict yi
+    calculate error
+    append to a _list
+
+    calculate mse
+    find maxError and maxMse
+    """
+    w = list()
+    readweights(weightsFile,w)
+
+    w1 =  float(str(w[0]))
+    w2 =  float(str(w[1]))
+    w3 =  float(str(w[2]))
+
+    error   = list()   
+    o_list  = list()
+    ml_list = list()
+ 
+    for xi in X:
+        x_i = xi.strip().split(' ')
+        
+        yi = float(x_i[0])
+        o_list.append(yi)
+        del x_i[0]
+
+        xi = list()
+        for features in range(len(x_i)):
+            xi.append(x_i[features].split(':')[-1])
+        f1 =  float(str(xi[0]))
+        f2 =  float(str(xi[1]))
+        f3 =  float(str(xi[2]))
+        yi_p = w1*f1 + w2*f2 + w3*f3
+        ml_list.append(yi_p)   
+     
+    maxError, meanSqError = getErrors(o_list,ml_list)
+ 
+    return maxError, meanSqError
+
 def linregr_train(X,T,s,rou):
     logging.debug( "number of epochs       :%d", T )
     logging.debug( "variance of w or sigma :%f", s ) 
@@ -115,15 +187,13 @@ def linregr_train(X,T,s,rou):
         logging.debug('epoch :%d', epoch)
         logging.debug('w: %s' % ( str(w) ) )
 
-    cmd = 'mkdir -p ./data/weights'
-    os.system(cmd)
-    
     with open(weightsFile,'w') as f:
         for weights in w:
             f.write(str(weights) + str('\n'))
     
     logging.debug( 'training complete' )
     logging.debug( w )
+    logging.debug( weightsFile )
 
 
     return    
@@ -146,6 +216,59 @@ if __name__ == "__main__":
     trainingFile = args.data
     X = open(trainingFile).readlines()
 
+    if ( args.mode == 'train_cv'):
+    
+        learner = '01_linregr'
+        logging.debug("initiating cv..")
+        K = 2
+
+        cvResultName = str('./data/cv_results/') + str('cvr.csv')
+        with open(cvResultName,'w') as f:
+            header = str('learner,hyperparameters,max_error,mse_error\n')
+            f.write(header)
+
+        T_range     = [0]
+        c_range     = [1]  
+        rou_range   = [0.0001]
+
+        maxError  = list()
+        meanSqError = list()
+        for T in T_range:
+            for c in c_range:
+                for rou in rou_range:
+                    logging.info( 'T: %d, c: %d, rou:%f' % ( T , c , rou ))
+                    
+                    learner = "01_linregr"
+                    hyperparameters = 'c_' + str(c) +'_rou_'+ str(rou)
+                    path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
+                    cmd = 'mkdir -p ' + str(path) 
+                    os.system(cmd)
+
+                    weightsFile = path + hyperparameters + '.w'
+
+                    for training, validation in kFoldCrossValidation(X, K):
+	                #for x in X: assert (x in training) ^ (x in validation), x
+	                for x in X: next 
+                        linregr_train(training,T,c,rou)
+                        maxErr, meanSqErr = linregr_test(validation,T,c,rou)
+                        maxError.append(maxErr)
+                        meanSqError.append(meanSqErr)
+        final_maxError    = max(maxError)
+        final_meanSqError = max(meanSqError)         
+        
+        with open(cvResultName,'a') as e:
+            line  = str(learner)
+            line += ','
+            line += str(hyperparameters)
+            line += ','
+            line += str(final_maxError) 
+            line += ','
+            line += str(final_meanSqError) + "\n"
+            e.write(line)
+        e.close()        
+                    
+        
+
     if ( (args.mode == 'train') or (args.mode == 'test') ):
         T                 = int(args.T)       # number of epoch
         rou               = float(args.rou)   # hyperparameter that determines the learning rate r
@@ -154,6 +277,6 @@ if __name__ == "__main__":
         logging.info('HyperParameters: T %d c %f rou %f',T,c,rou)
         logging.info('weightsFile: %s', weightsFile)
 
-    if args.mode == 'train':
+    if args.mode == 'train' :
         logging.info('--mode : train')
         linregr_train(X,T,c,rou)

@@ -30,7 +30,11 @@ python ./utils/run.py -mode cv -using 01_linregr -bvp uni
 python ./utils/run.py -mode cv -using 01_linregr -bvp tri
 python ./utils/run.py -mode cv -using 01_linregr -bvp pwl
 
-#python ./utils/run.py -mode cv -using 02_liblinear &> ./data/cv_results/02_liblinear_cv_raw.csv
+python ./utils/run.py -mode cv -using 02_liblinear -bvp uni &> ./data/cv_results/02_liblinear_cv_uni_raw.csv
+python ./utils/run.py -mode cv -using 02_liblinear -bvp tri &> ./data/cv_results/02_liblinear_cv_tri_raw.csv
+python ./utils/run.py -mode cv -using 02_liblinear -bvp pwl &> ./data/cv_results/02_liblinear_cv_pwl_raw.csv
+
+
 #python ./utils/run.py -mode cv -using 03_libsvm &> ./data/cv_results/03_libsvm_cv_raw.csv
 
 #

@@ -93,7 +93,7 @@ def linregr(T,c,rou,mode,bvp):
     return
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def liblinear(s,p,e,c,mode):
+def liblinear(s,p,e,c,mode,bvp):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     """method for invoking the lib linear with hyperparameters"""
     logging.debug("hp: %f,%f,%f,%f" % ( s,p,e,c ) )
@@ -106,13 +106,15 @@ def liblinear(s,p,e,c,mode):
     os.system(cmd)
 
     weightsFile = path + hyperparameters + '.m'
+    trainFilePath   = './data/training/'
+    trainFileName   = trainFilePath + str(bvp) + '_train.svm'
 
     if mode == 'train_cv' :
         cmd = './learners/02_liblinear/train' +\
-                ' -v 6 -h 0' +\
+                ' -v 6' +\
                 ' -s ' + str(s) + ' -p ' + str(p) + ' -e ' + str(e) + ' -c ' + str(c) +\
-                ' ./data/training/train.svm ' +\
-                str(weightsFile)
+                ' ' + str(trainFileName) +\
+                ' ' + str(weightsFile)
         logging.debug( cmd )
         os.system(cmd)
           
@@ -151,7 +153,7 @@ def libsvm(s,p,e,c,mode):
 
     if mode == "train_cv":
         cmd = './learners/03_libsvm/svm-train' +\
-                ' -v 6' +\
+                ' -v 6 -h 0' +\
                 ' -s ' + str(s) + ' -p ' + str(p) + ' -e ' + str(e) + ' -c ' + str(c) +\
                 ' ./data/training/train.svm ' +\
                 str(weightsFile)
@@ -229,14 +231,14 @@ def getWeights(fvlen,modelfname,weightsFile):
     w.close()
     return
 
-def writeCVResults(learner):
+def writeCVResults(learner,bvp):
     path     = './data/cv_results/'
-    filename = str(learner) + '_cv_results.csv'
+    filename = str(learner) + '_cv_' + str(bvp) + '_' + 'results.csv'
     filepath = path + filename
 
     with open(filepath,'a') as cvr:
         path_raw     = './data/cv_results/' 
-        filename_raw = str(learner) + '_cv_raw.csv'
+        filename_raw = str(learner) + '_cv_' + str(bvp) + '_' + 'raw.csv'
         filepath_raw = path_raw + filename_raw
         with open(filepath_raw,'r') as cv:
             C = cv.readlines()
@@ -307,6 +309,10 @@ if __name__ == "__main__":
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             logging.debug('invoking 10-fold cross validation for 02_liblinear')
             mode = 'train_cv'
+            #S_range=[11]
+            #P_range=[0.001]
+            #E_range=[0.001]
+            #C_range=[0.01]
             S_range=[11,12,13]
             P_range=[0.001,0.01,0.1,]
             E_range=[0.001,0.01,0.1]
@@ -316,8 +322,8 @@ if __name__ == "__main__":
                 for p in P_range:
                     for e in E_range:
                         for c in C_range: 
-                            liblinear(s,p,e,c,mode)
-            writeCVResults(args.using)          
+                            liblinear(s,p,e,c,mode,bvp)
+            writeCVResults(args.using,bvp)          
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if args.using == '03_libsvm':
@@ -336,6 +342,7 @@ if __name__ == "__main__":
             writeCVResults(args.using)          
 
     if args.mode  == 'train':
+        bvp  = args.bvp
         mode = 'train'
         if args.using == '01_linregr':
             logging.debug('invoking our linear regression to learn the solution for the bvp')
@@ -343,7 +350,7 @@ if __name__ == "__main__":
             T    = 3
             c    = 1
             rou  = 0.0001
-            linregr(T,c,rou,mode)
+            linregr(T,c,rou,mode,bvp)
 
         if args.using == '02_liblinear':
             logging.debug('invoking the LIBLINEAR to learn the solution for the bvp')
@@ -351,7 +358,7 @@ if __name__ == "__main__":
             p    = 0.000001
             e    = 0.0000001
             c    = 100
-            liblinear(s,p,e,c,mode)
+            liblinear(s,p,e,c,mode,bvp)
         
         if args.using == '03_libsvm':
             logging.debug('invoking the LIBSVM liblinear to learn the solution for the bvp')
@@ -376,7 +383,7 @@ if __name__ == "__main__":
             c    = 100
             p    = 0.000001
             e    = 0.0000001
-            liblinear(s,p,e,c,mode)
+            liblinear(s,p,e,c,mode,bvp)
             
         if args.using == '03_libsvm':
             logging.debug('invoking the pde solver with learned model')

@@ -10,8 +10,9 @@ import argparse
 import os
 import sys
 
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def getErrors(o_list, ml_list):
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     sq_error = 0
     sum_sq_error = 0
     mse = 0
@@ -19,77 +20,47 @@ def getErrors(o_list, ml_list):
     for i in range(len(o_list)):
         error.append(float(o_list[i]) - float(ml_list[i]))
     maxE= max(error)
-    
     for i in range(len(o_list)):
         sq_error = error[i] * error[i]
         sum_sq_error += sq_error
     mSE = float(sum_sq_error) / len(o_list)
-    
     return maxE, mSE
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def writeError(learner, hyperparameters, mode):
-    
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     path        = './data/solutions/'
     output      = 'h_test01.txt'
-
     filename_o  = path + 'original/'  + output
     filename_ml = path + str(learner) + '/' + str(hyperparameters) + '/' + output
-
     print filename_o
     print filename_ml
-
     """ 
     compare the temperatures of the final timestep
     take MSE and write to a file as error in the same dir as solutions
     """
-    
     o_list = []
     with open(filename_o) as orig:
         OT = orig.readlines()
         for i in range(len(OT)):
             o_list.append(OT[i].strip().split("  ")[-1])
-    
     ml_list = []
     with open(filename_ml) as ml:
         ML = ml.readlines()
         for i in range(len(ML)):
             ml_list.append(ML[i].strip().split("  ")[-1])
-
     maxError, meanSqError = getErrors(o_list,ml_list)
     filename = 'errors.txt'
     errorFileName = path + str(learner) + '/' + str(hyperparameters) + '/' + filename
-    
     with open(errorFileName,'w') as e:
         line = str(maxError) + str(" ") + str(meanSqError) + "\n"
         e.write(line)
     e.close()        
-    
     return
-
-"""
-    if mode == "test_cv":
-        path        = './data/cv_results/'
-        cv_results  = path + 'cv_results' + '.csv'
-
-        with open(cv_results,'a') as c:
-            line  = str(learner)
-            line += ','
-            line += str(hyperparameters) 
-            line += ','
-            line += str(maxError)
-            line += ','
-            line += str(meanSqError)
-            line += '\n'
-            c.write(line)
-        c.close()
-"""
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def linregr(T,c,rou,mode):
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     """method for invoking the linear regression with hyperparameters"""
     logging.debug("hp: T=%d c=%f rou=%f" % ( T,c,rou ) )
-    #print ("hp: T=%d c=%f rou=%f" % ( T,c,rou ) )
 
     learner = "01_linregr"
     hyperparameters = 'c_' + str(c) +'_rou_'+ str(rou)
@@ -117,10 +88,11 @@ def linregr(T,c,rou,mode):
 
     return
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def liblinear(s,p,e,c,mode):
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     """method for invoking the lib linear with hyperparameters"""
     logging.debug("hp: %f,%f,%f,%f" % ( s,p,e,c ) )
-    #print ("hp: s=%f p=%f e=%f c=%f" % ( s,p,e,c ) )
     
     learner = "02_liblinear"
 
@@ -157,7 +129,9 @@ def liblinear(s,p,e,c,mode):
 
     return
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def libsvm(s,p,e,c,g,r,t,mode):
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     """method for invoking the lib svm with hyperparameters"""
     logging.debug("hp: s=%f p=%f e=%f c=%f g=%f r=%f t=%f" % ( s,p,e,c,g,r,t ) )
     
@@ -190,7 +164,9 @@ def libsvm(s,p,e,c,g,r,t,mode):
 
     return
     
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def getWeights(fvlen,modelfname,weightsFile):
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     l = 0
     rho = 0.00
     c = []
@@ -199,10 +175,6 @@ def getWeights(fvlen,modelfname,weightsFile):
     fn = ""
     svidx=0
     
-    # Extract values of total_sv, rho and SV
-    # from the SVM model file
-    # Pass 1: Get the index of the variables
-    # from the list content[]
     fmodel = open(modelfname,'r')
     content = fmodel.readlines()
     fmodel.close()
@@ -218,9 +190,6 @@ def getWeights(fvlen,modelfname,weightsFile):
         svidx = i+1
         print "SV = " + str(svidx)
         
-    # Pass 2: Read the values of the variables
-    # from the list content[] using the indices
-    # obatined in pass 1
     for i in range(svidx,svidx+l):
       line = content[i].replace('\n','')
       lnfields = line.split()
@@ -247,7 +216,9 @@ def getWeights(fvlen,modelfname,weightsFile):
     w.close()
     return
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if __name__ == "__main__":
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     parser = argparse.ArgumentParser( description = "this program defines the user interface of the project\
                                       for the class cs635 machine learning of fall 2015, help pick the best\
                                       learner and associated settings for a give pde as a boundary value problem")
@@ -272,12 +243,12 @@ if __name__ == "__main__":
         cmd = 'mkdir -p ./data/cv_results/'
         os.system(cmd)
         
-        # dummy hyperparameters
-        # the learner to use ranges of hyperparameters
-        # and printout the cv errors 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if args.using == '01_linregr':
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            # dummy hyperparameters
+            # the learner to use ranges of hyperparameters
+            # and printout the cv errors 
             logging.debug('invoking 10-fold cross validation for 01_linregr')
             T=0
             c=0

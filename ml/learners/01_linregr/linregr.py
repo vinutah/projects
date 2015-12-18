@@ -222,7 +222,7 @@ if __name__ == "__main__":
         bvp = args.bvp
         learner = '01_linregr'
         logging.debug("initiating cv..")
-        K = 5
+        K = 3
 
         cvResultName = str('./data/cv_results/') + 'cvr' + '_' + str(bvp)  + '.csv'
         with open(cvResultName,'w') as f:
@@ -230,8 +230,8 @@ if __name__ == "__main__":
             f.write(header)
 
         T           = 5
-        c_range     = [0.0001,0.001,0.01,0.1]  
-        rou_range   = [0.0001,0.001,0.01,0.1]
+        c_range     = [0.001,0.01,0.1]  
+        rou_range   = [0.001,0.01,0.1]
 
         maxError  = list()
         meanSqError = list()

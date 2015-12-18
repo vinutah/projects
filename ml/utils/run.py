@@ -105,7 +105,7 @@ def liblinear(s,p,e,c,mode):
 
     if mode == 'train_cv' :
         cmd = './learners/02_liblinear/train' +\
-                ' -v 6' +\
+                ' -v 6 -h 0' +\
                 ' -s ' + str(s) + ' -p ' + str(p) + ' -e ' + str(e) + ' -c ' + str(c) +\
                 ' ./data/training/train.svm ' +\
                 str(weightsFile)
@@ -263,13 +263,19 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    if args.mode  == 'original':
+    icKey = 'original'
+    if icKey in args.mode:
+        mode = args.mode
+        logging.debug('executing the pde in mode %s', (mode))
         if args.action == 'solve':
             logging.debug('invoking the original pde solver')
-            path = './data/solutions/original/'
+            path = './data/solutions/' + str(mode) + '/'
             cmd = 'mkdir -p ' + str(path)
+            logging.debug(cmd)
             os.system(cmd)
-            cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'native'
+            
+            cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + mode
+            logging.debug(cmd)
             os.system(cmd)
 
     if args.mode == 'cv':

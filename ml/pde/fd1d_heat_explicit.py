@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 
-def save_training_data(dep_var, feature_1, feature_2, feature_3):
-    filename = "./data/training/train.svm"
+def save_training_data(dep_var, feature_1, feature_2, feature_3, mode):
+    path = './data/training/'
+    filename =  path + str(mode) + '_train.svm'
     with open(filename,'a') as f:
         line  =         str(dep_var)
         line += ' 1:' + str(feature_1) 
@@ -33,9 +34,10 @@ def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h, mode , weightsFile):
     r = c + 1
 
 
-    if mode == 'native': 
+    exeKey = 'original'
+    if exeKey in mode:
         h_new[c] = h[c] + cfl * ( h[l] - 2.0 * h[c] + h[r] ) + dt * f[c]
-        save_training_data(h_new[c] , h[l] , h[c] , h[r] )
+        save_training_data(h_new[c] , h[l] , h[c] , h[r], mode )
 
     if mode == 'ml_model':
         w = list()
@@ -58,6 +60,6 @@ def fd1d_heat_explicit ( x_num, x, t, dt, cfl, rhs, bc, h, mode , weightsFile):
 
         h_new[c] = w1*f1 + w2*f2 + w3*f3
     
-  h_new = bc ( x_num, x, t + dt, h_new )
+  h_new = bc ( x_num, x, t + dt, h_new, mode )
 
   return h_new

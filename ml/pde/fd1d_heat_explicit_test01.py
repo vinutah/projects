@@ -67,8 +67,8 @@ def fd1d_heat_explicit_test01(path,mode,weightsFile):
 
   for j in range ( 0, t_num ):
     if ( j == 0 ):
-      h = ic_test01 ( x_num, x, t[j] )
-      h = bc_test01 ( x_num, x, t[j], h )
+      h = ic_test01 ( x_num, x, t[j] ,mode)
+      h = bc_test01 ( x_num, x, t[j], h ,mode)
       
     else:
       h = fd1d_heat_explicit ( x_num, x, t[j-1], dt, cfl, rhs_test01, bc_test01, h, mode, weightsFile )
@@ -87,7 +87,9 @@ def fd1d_heat_explicit_test01(path,mode,weightsFile):
   plt.ylabel ( '<---T--->' )
   plt.title ( 'U(X,T)' )
   save_at  = path.strip()
-  filename = str(save_at) + 'plot_test01.png'
+  print path, save_at
+  filename = str(save_at) + 'plot_test_' + str(mode)  + '.png'
+  print filename
   plt.savefig (filename)
   #plt.show ( )
 #
@@ -113,7 +115,7 @@ def fd1d_heat_explicit_test01(path,mode,weightsFile):
 
   return
 
-def bc_test01 ( x_num, x, t, h ):
+def bc_test01 ( x_num, x, t, h, mode ):
 # bc_test01 evaluates the boundary conditions for problem 1.
 #    Input, integer X_NUM, the number of nodes.
 #    Input, real X(X_NUM,1), the node coordinates.
@@ -122,12 +124,60 @@ def bc_test01 ( x_num, x, t, h ):
 #    Output, real H(X_NUM), the current heat values, after boundary
 #    conditions have been imposed.
 #
-  h[0]       = 90.0
-  h[x_num-1] = 70.0
+  #for uniform
+  if mode == 'original_uni_1':
+    h[0]       = 90.0
+    h[x_num-1] = 70.0
+
+  if mode == 'original_uni_2':
+    h[0]       = 50.0
+    h[x_num-1] = 50.0
+  
+  if mode == 'original_uni_3':
+    h[0]       = 25.0
+    h[x_num-1] = 85.0
+  
+  if mode == 'original_uni_4':
+    h[0]       = 75.0
+    h[x_num-1] = 80.0
+
+  #for tri
+  if mode == 'original_tri_1':
+    h[0]       = 0.0
+    h[x_num-1] = 0.0
+
+  if mode == 'original_tri_2':
+    h[0]       = 5.0
+    h[x_num-1] = 5.0
+  
+  if mode == 'original_tri_3':
+    h[0]       = 20.0
+    h[x_num-1] = 20.0
+  
+  if mode == 'original_tri_4':
+    h[0]       = 10.0
+    h[x_num-1] = 10.0
+
+  #for pwl  
+  if mode == 'original_pwl_1':
+    h[0]       = 0.0
+    h[x_num-1] = 50.0
+
+  if mode == 'original_pwl_2':
+    h[0]       = 00.0
+    h[x_num-1] = 90.0
+  
+  if mode == 'original_pwl_3':
+    h[0]       = 0.0
+    h[x_num-1] = 60.0
+  
+  if mode == 'original_pwl_4':
+    h[0]       = 50.0
+    h[x_num-1] = 0.0
 
   return h
 
-def ic_test01 ( x_num, x, t ):
+def ic_test01 ( x_num, x, t , mode):
 # ic_test01 evaluates the initial condition for problem 1.
 #    Input, integer X_NUM, the number of nodes.
 #    Input, real X(X_NUM), the node coordinates.
@@ -139,7 +189,69 @@ def ic_test01 ( x_num, x, t ):
   h = np.zeros ( x_num )
 
   for i in range ( 0, x_num ):
-    h[i] = 50.0
+    #for uniform
+    if mode == 'original_uni_1':
+      h[i] = 50.0
+    if mode == 'original_uni_2':
+      h[i] = 25.0
+    if mode == 'original_uni_3':
+      h[i] = 0.0
+    if mode == 'original_uni_4':
+      h[i] = 10.0
+    
+    if mode == 'original_tri_1':
+      A = 50
+      if (i< (float(x_num/2))):
+        h[i] = float(2*A*i/x_num)
+      else:
+        h[i] = -1 * (float(2*A*i/x_num)) + 2*A
+ 
+    if mode == 'original_tri_2':
+      A = 20
+      if (i< (float(x_num/2))):
+        h[i] = float(2*A*i/x_num)
+      else:
+        h[i] = -1 * (float(2*A*i/x_num)) + 2*A
+ 
+    if mode == 'original_tri_3':
+      A = 50
+      if (i< (float(x_num/2))):
+        h[i] = float(2*A*i/x_num)
+      else:
+        h[i] = -1 * (float(2*A*i/x_num)) + 2*A
+    
+    if mode == 'original_tri_4':
+      A = 60
+      if (i< (float(x_num/2))):
+        h[i] = float(2*A*i/x_num)
+      else:
+        h[i] = -1 * (float(2*A*i/x_num)) + 2*A
+    
+    if mode == 'original_pwl_1':
+          
+      if (i < (float(x_num)/2) ):
+        h[i] = 0.0
+      else:
+        h[i] = 50.0
+        
+    if mode == 'original_pwl_2':
+      if (i < (float(x_num*3/4)) ):
+        h[i] = 0.0
+      else:
+        h[i] = 70.0
+        
+    if mode == 'original_pwl_3':
+      if (i < (float(x_num*3/4)) ):
+        h[i] = 20.0
+      else:
+        h[i] = 0.0
+        
+    if mode == 'original_pwl_4':
+      if (i < (float(x_num*3/4)) ):
+        h[i] = 50.0
+      else:
+        h[i] = 0.0
+        
 
   return h
 

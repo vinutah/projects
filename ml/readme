@@ -4,7 +4,7 @@ python ./utils/run.py -mode original -action solve
 CROSS VALIDATION
 python ./utils/run.py -mode cv -using 01_linregr
 python ./utils/run.py -mode cv -using 02_liblinear &> ./data/cv_results/02_liblinear_cv_raw.csv
-
+python ./utils/run.py -mode cv -using 03_libsvm &> ./data/cv_results/03_libsvm_cv_raw.csv
 
 TRAINING PHASE
 Using the Best algorithm and its associated hyperparameters, retrain:

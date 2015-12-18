@@ -296,9 +296,9 @@ if __name__ == "__main__":
             logging.debug('invoking 10-fold cross validation for 02_liblinear')
             mode = 'train_cv'
             S_range=[11,12,13]
-            P_range=[0.001,0.01,0.1,1,10]
-            E_range=[0.001,0.01,0.1,1,10]
-            C_range=[0.001,0.01,0.1,1,10]
+            P_range=[0.001,0.01,0.1,]
+            E_range=[0.001,0.01,0.1]
+            C_range=[0.01,0.1,1,10]
 
             for s in S_range:
                 for p in P_range:
@@ -313,9 +313,9 @@ if __name__ == "__main__":
             logging.debug('invoking 10-fold cross validation for 03_libsvm')
             mode = 'train_cv'
             s = 3 #epsilon-SVR 
-            P_range = [0.0001,0.001,0.01,0.1,1]
-            E_range = [0.0001,0.001,0.01,0.1,1] 
-            C_range = [0.001,0.01,0.1,1,10,100]
+            P_range=[0.001,0.01,0.1,]
+            E_range=[0.001,0.01,0.1]
+            C_range=[0.01,0.1,1,10]
 
             for p in P_range:
                 for e in E_range:
@@ -347,9 +347,6 @@ if __name__ == "__main__":
             p = 0.01
             e = 0.01
             c = 100
-            g = 1
-            r = 1
-            t = 0 
             libsvm(s,p,e,c,mode)
             
     if args.mode  == 'test':
@@ -376,7 +373,4 @@ if __name__ == "__main__":
             c = 100
             p = 0.01
             e = 0.01
-            t = 0 
-            r = 1
-            g = 1
             libsvm(s,p,e,c,mode)

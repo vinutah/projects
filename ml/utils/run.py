@@ -130,14 +130,14 @@ def liblinear(s,p,e,c,mode):
     return
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def libsvm(s,p,e,c,g,r,t,mode):
+def libsvm(s,p,e,c,mode):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     """method for invoking the lib svm with hyperparameters"""
-    logging.debug("hp: s=%f p=%f e=%f c=%f g=%f r=%f t=%f" % ( s,p,e,c,g,r,t ) )
+    logging.debug("hp: s=%f p=%f e=%f c=%f" % ( s,p,e,c,) )
     
     learner = "03_libsvm"
     
-    hyperparameters = 's_' + str(s) +'_p_'+ str(p) + '_e_' + str(e) + '_c_' + str(c) + '_g_' + str(g) + '_r_' + str(r) + '_t_' + str(t)
+    hyperparameters = 's_' + str(s) +'_p_'+ str(p) + '_e_' + str(e) + '_c_' + str(c)
     path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
     cmd = 'mkdir -p ' + str(path) 
     os.system(cmd)
@@ -145,9 +145,18 @@ def libsvm(s,p,e,c,g,r,t,mode):
     modelFile = path + hyperparameters + '.m'
     weightsFile = path + hyperparameters + '.w'
 
+    if mode == "train_cv":
+        cmd = './learners/03_libsvm/svm-train' +\
+                ' -v 6' +\
+                ' -s ' + str(s) + ' -p ' + str(p) + ' -e ' + str(e) + ' -c ' + str(c) +\
+                ' ./data/training/train.svm ' +\
+                str(weightsFile)
+        logging.debug( cmd )
+        os.system(cmd)
+
     if mode == "train":
         cmd = './learners/03_libsvm/svm-train' +\
-                ' -s ' + str(s) +' -p '+ str(p) + ' -e ' + str(e) + ' -c ' + str(c) + ' -g ' + str(g) + ' -r ' + str(r) + ' -t ' + str('t') +\
+                ' -s ' + str(s) +' -p '+ str(p) + ' -e ' + str(e) + ' -c ' + str(c) +\
                 ' ./data/training/train.svm ' +\
                 str(modelFile)
         logging.debug( cmd )
@@ -216,6 +225,31 @@ def getWeights(fvlen,modelfname,weightsFile):
     w.close()
     return
 
+def writeCVResults(learner):
+    path     = './data/cv_results/'
+    filename = str(learner) + '_cv_results.csv'
+    filepath = path + filename
+
+    with open(filepath,'a') as cvr:
+        path_raw     = './data/cv_results/' 
+        filename_raw = str(learner) + '_cv_raw.csv'
+        filepath_raw = path_raw + filename_raw
+        with open(filepath_raw,'r') as cv:
+            C = cv.readlines()
+            for i in range(len(C)):
+                hpKey = 'DEBUG:root:hp:'
+                if hpKey in C[i]:
+                    hps = C[i].strip().split(" ")
+                acKey = 'Cross Validation Mean'
+                if acKey in C[i]:
+                    er = C[i].strip().split("=")
+                    line  = str(hps[1]) + str(',') + str(er[1].lstrip())
+                    line += '\n'
+                    cvr.write(line)
+        cv.close()
+    cvr.close()
+    return
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if __name__ == "__main__":
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -271,37 +305,23 @@ if __name__ == "__main__":
                     for e in E_range:
                         for c in C_range: 
                             liblinear(s,p,e,c,mode)
-            
-            hp_list  = list()
-            cva_list = list()
-
-            path     = './data/cv_results/'
-            filename = '02_liblinear_cv_results.csv'
-            filepath = path + filename
-
-            with open(filepath,'a') as cvr:
-                path_raw     = './data/cv_results/' 
-                filename_raw = '02_liblinear_cv_raw.csv'
-                filepath_raw = path_raw + filename_raw
-                with open(filepath_raw,'r') as cv:
-                    C = cv.readlines()
-                    for i in range(len(C)):
-                        hpKey = 'DEBUG:root:hp:'
-                        if hpKey in C[i]:
-                            hps = C[i].strip().split(" ")
-                        acKey = 'Cross Validation Mean'
-                        if acKey in C[i]:
-                            er = C[i].strip().split("=")
-                            line  = str(hps[1]) + str(',') + str(er[1].lstrip())
-                            line += '\n'
-                            cvr.write(line)
-                cv.close()
-            cvr.close()
+            writeCVResults(args.using)          
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if args.using == '03_libsvm':
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             logging.debug('invoking 10-fold cross validation for 03_libsvm')
+            mode = 'train_cv'
+            s = 3 #epsilon-SVR 
+            P_range = [0.0001,0.001,0.01,0.1,1]
+            E_range = [0.0001,0.001,0.01,0.1,1] 
+            C_range = [0.001,0.01,0.1,1,10,100]
+
+            for p in P_range:
+                for e in E_range:
+                    for c in C_range: 
+                        libsvm(s,p,e,c,mode)
+            writeCVResults(args.using)          
 
     if args.mode  == 'train':
         mode = 'train'
@@ -330,7 +350,7 @@ if __name__ == "__main__":
             g = 1
             r = 1
             t = 0 
-            libsvm(s,p,e,c,g,r,t,mode)
+            libsvm(s,p,e,c,mode)
             
     if args.mode  == 'test':
         mode = 'test'
@@ -349,7 +369,6 @@ if __name__ == "__main__":
             e    = 0.0000001
             liblinear(s,p,e,c,mode)
             
-
         if args.using == '03_libsvm':
             logging.debug('invoking the pde solver with learned model')
             learner = args.using
@@ -360,6 +379,4 @@ if __name__ == "__main__":
             t = 0 
             r = 1
             g = 1
-            libsvm(s,p,e,c,g,r,t,mode)
-            
-
+            libsvm(s,p,e,c,mode)

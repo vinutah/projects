@@ -89,6 +89,7 @@ def writeError(learner, hyperparameters, mode):
 def linregr(T,c,rou,mode):
     """method for invoking the linear regression with hyperparameters"""
     logging.debug("hp: T=%d c=%f rou=%f" % ( T,c,rou ) )
+    #print ("hp: T=%d c=%f rou=%f" % ( T,c,rou ) )
 
     learner = "01_linregr"
     hyperparameters = 'c_' + str(c) +'_rou_'+ str(rou)
@@ -103,12 +104,14 @@ def linregr(T,c,rou,mode):
               ' -T ' + str(T) + ' -c ' + str(c) + ' -rou ' + str(rou) + \
               ' -mode '  + str(mode) + ' -data ' + str('./data/training/train.svm') + \
               ' -wname ' + str(weightsFile)
-        print cmd
+        logging.debug( cmd )
+        print '\n'
         os.system(cmd)
    
-    if mode == 'test' or mode == 'test_cv' :
+    if mode == 'test' :
         cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
-        print cmd
+        logging.debug( cmd )
+        print '\n'
         os.system(cmd)
         writeError(learner, hyperparameters, mode)
 
@@ -116,7 +119,8 @@ def linregr(T,c,rou,mode):
 
 def liblinear(s,p,e,c,mode):
     """method for invoking the lib linear with hyperparameters"""
-    logging.debug("hp: s=%f p=%f e=%f c=%f" % ( s,p,e,c ) )
+    logging.debug("hp: %f,%f,%f,%f" % ( s,p,e,c ) )
+    #print ("hp: s=%f p=%f e=%f c=%f" % ( s,p,e,c ) )
     
     learner = "02_liblinear"
 
@@ -126,18 +130,28 @@ def liblinear(s,p,e,c,mode):
     os.system(cmd)
 
     weightsFile = path + hyperparameters + '.m'
-    
+
+    if mode == 'train_cv' :
+        cmd = './learners/02_liblinear/train' +\
+                ' -v 6' +\
+                ' -s ' + str(s) + ' -p ' + str(p) + ' -e ' + str(e) + ' -c ' + str(c) +\
+                ' ./data/training/train.svm ' +\
+                str(weightsFile)
+        logging.debug( cmd )
+        os.system(cmd)
+          
+ 
     if mode == 'train':
         cmd = './learners/02_liblinear/train' +\
                 ' -s ' + str(s) + ' -p ' + str(p) + ' -e ' + str(e) + ' -c ' + str(c) +\
                 ' ./data/training/train.svm ' +\
                 str(weightsFile)
-        print cmd
+        logging.debug( cmd )
         os.system(cmd)
    
     if mode == 'test':
         cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
-        print cmd
+        logging.debug( cmd )
         os.system(cmd)
         writeError(learner, hyperparameters, mode)
 
@@ -162,13 +176,15 @@ def libsvm(s,p,e,c,g,r,t,mode):
                 ' -s ' + str(s) +' -p '+ str(p) + ' -e ' + str(e) + ' -c ' + str(c) + ' -g ' + str(g) + ' -r ' + str(r) + ' -t ' + str('t') +\
                 ' ./data/training/train.svm ' +\
                 str(modelFile)
-        print cmd
+        logging.debug( cmd )
+        print '\n'
         os.system(cmd)
         getWeights(3,modelFile,weightsFile)
     
     if mode == "test":
         cmd = 'python ./pde/fd1d_heat_explicit_test.py ' + '-solve ' + str(path) + ' -mode ' + 'ml_model ' + ' -weights ' + str(weightsFile)
-        print cmd
+        logging.debug( cmd )
+        print '\n'
         os.system(cmd)
         writeError(learner, hyperparameters, mode)
 
@@ -252,28 +268,69 @@ if __name__ == "__main__":
             os.system(cmd)
 
     if args.mode == 'cv':
-        logging.debug('invoking 10-fold cross validation for 01_linregr')
         
         cmd = 'mkdir -p ./data/cv_results/'
         os.system(cmd)
         
+        # dummy hyperparameters
+        # the learner to use ranges of hyperparameters
+        # and printout the cv errors 
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if args.using == '01_linregr':
-            # dummy hyperparameters
-            # the learner to use ranges of hyperparameters
-            # and printout the cv errors 
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            logging.debug('invoking 10-fold cross validation for 01_linregr')
             T=0
             c=0
             rou=0            
             mode = 'train_cv'
             linregr(T,c,rou,mode)
 
-
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if args.using == '02_liblinear':
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             logging.debug('invoking 10-fold cross validation for 02_liblinear')
+            mode = 'train_cv'
+            S_range=[11,12,13]
+            P_range=[0.001,0.01,0.1,1,10]
+            E_range=[0.001,0.01,0.1,1,10]
+            C_range=[0.001,0.01,0.1,1,10]
 
+            for s in S_range:
+                for p in P_range:
+                    for e in E_range:
+                        for c in C_range: 
+                            liblinear(s,p,e,c,mode)
+            
+            hp_list  = list()
+            cva_list = list()
+
+            path     = './data/cv_results/'
+            filename = '02_liblinear_cv_results.csv'
+            filepath = path + filename
+
+            with open(filepath,'a') as cvr:
+                path_raw     = './data/cv_results/' 
+                filename_raw = '02_liblinear_cv_raw.csv'
+                filepath_raw = path_raw + filename_raw
+                with open(filepath_raw,'r') as cv:
+                    C = cv.readlines()
+                    for i in range(len(C)):
+                        hpKey = 'DEBUG:root:hp:'
+                        if hpKey in C[i]:
+                            hps = C[i].strip().split(" ")
+                        acKey = 'Cross Validation Mean'
+                        if acKey in C[i]:
+                            er = C[i].strip().split("=")
+                            line  = str(hps[1]) + str(',') + str(er[1].lstrip())
+                            line += '\n'
+                            cvr.write(line)
+                cv.close()
+            cvr.close()
+
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if args.using == '03_libsvm':
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             logging.debug('invoking 10-fold cross validation for 03_libsvm')
-
 
     if args.mode  == 'train':
         mode = 'train'
@@ -285,7 +342,6 @@ if __name__ == "__main__":
             rou  = 0.0001
             linregr(T,c,rou,mode)
 
-
         if args.using == '02_liblinear':
             logging.debug('invoking the LIBLINEAR to learn the solution for the bvp')
             s    = 12
@@ -293,7 +349,6 @@ if __name__ == "__main__":
             e    = 0.0000001
             c    = 100
             liblinear(s,p,e,c,mode)
-        
         
         if args.using == '03_libsvm':
             logging.debug('invoking the LIBSVM liblinear to learn the solution for the bvp')
@@ -306,7 +361,6 @@ if __name__ == "__main__":
             t = 0 
             libsvm(s,p,e,c,g,r,t,mode)
             
-
     if args.mode  == 'test':
         mode = 'test'
 

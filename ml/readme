@@ -3,6 +3,7 @@ python ./utils/run.py -mode original -action solve
 
 CROSS VALIDATION
 python ./utils/run.py -mode cv -using 01_linregr
+python ./utils/run.py -mode cv -using 02_liblinear &> ./data/cv_results/02_liblinear_cv_raw.csv
 
 
 TRAINING PHASE

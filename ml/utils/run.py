@@ -57,7 +57,7 @@ def writeError(learner, hyperparameters, mode):
     e.close()        
     return
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def linregr(T,c,rou,mode):
+def linregr(T,c,rou,mode,bvp):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     """method for invoking the linear regression with hyperparameters"""
     logging.debug("hp: T=%d c=%f rou=%f" % ( T,c,rou ) )
@@ -68,13 +68,17 @@ def linregr(T,c,rou,mode):
     cmd = 'mkdir -p ' + str(path) 
     os.system(cmd)
 
-    weightsFile = path + hyperparameters + '.w'
-    
+    weightsFile     = path + hyperparameters + '.w'
+    trainFilePath   = './data/training/'
+    trainFileName   = trainFilePath + str(bvp) + '_train.svm'
+
     if mode == 'train' or mode == 'train_cv' :
         cmd = 'python ./learners/01_linregr/linregr.py'+\
               ' -T ' + str(T) + ' -c ' + str(c) + ' -rou ' + str(rou) + \
-              ' -mode '  + str(mode) + ' -data ' + str('./data/training/train.svm') + \
-              ' -wname ' + str(weightsFile)
+              ' -mode '  + str(mode) + ' -data ' + str(trainFileName) + \
+              ' -wname ' + str(weightsFile) + \
+              ' -bvp ' + str(bvp)
+
         logging.debug( cmd )
         print '\n'
         os.system(cmd)
@@ -258,6 +262,7 @@ if __name__ == "__main__":
                                       learner and associated settings for a give pde as a boundary value problem")
 
     parser.add_argument("-mode",   help='name of the mode    ',required=True)
+    parser.add_argument("-bvp",    help='name of the bvp     ',required=False)
     parser.add_argument("-action", help='name of the action to be performed',required=False)
     parser.add_argument("-using",  help='name of the learner ',required=False)
     
@@ -279,6 +284,7 @@ if __name__ == "__main__":
             os.system(cmd)
 
     if args.mode == 'cv':
+        bvp = args.bvp
         
         cmd = 'mkdir -p ./data/cv_results/'
         os.system(cmd)
@@ -294,7 +300,7 @@ if __name__ == "__main__":
             c=0
             rou=0            
             mode = 'train_cv'
-            linregr(T,c,rou,mode)
+            linregr(T,c,rou,mode,bvp)
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         if args.using == '02_liblinear':

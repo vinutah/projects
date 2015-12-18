@@ -210,6 +210,7 @@ if __name__ == "__main__":
     parser.add_argument("-c", help='the value of c for use in w update rule and deciding the learning rate', required=False)
     parser.add_argument("-rou", help='the value of initial learning rate for use in w update rule', required=False)
     parser.add_argument("-wname",help='please pass the a id like prefix that distinguishes 1 w from another',required=False)
+    parser.add_argument("-bvp",help='please pass the a id for the cvr results that distinguishes 1 cvr from another',required=False)
 
     args = parser.parse_args()
 
@@ -218,18 +219,19 @@ if __name__ == "__main__":
 
     if ( args.mode == 'train_cv'):
     
+        bvp = args.bvp
         learner = '01_linregr'
         logging.debug("initiating cv..")
         K = 5
 
-        cvResultName = str('./data/cv_results/') + str('cvr.csv')
+        cvResultName = str('./data/cv_results/') + 'cvr' + '_' + str(bvp)  + '.csv'
         with open(cvResultName,'w') as f:
             header = str('learner,hyperparameters,max_error,mse_error\n')
             f.write(header)
 
-        T           = 1
-        c_range     = [0.1,0.2]  
-        rou_range   = [0.0001]
+        T           = 5
+        c_range     = [0.0001,0.001,0.01,0.1]  
+        rou_range   = [0.0001,0.001,0.01,0.1]
 
         maxError  = list()
         meanSqError = list()

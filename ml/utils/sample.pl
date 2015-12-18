@@ -9,7 +9,7 @@ my $training_file = $ARGV[1];
 
 
 my $filename_in = "$training_file";
-my $filename_out = "$training_file . _s";
+my $filename_out = "$training_file"."_s";
 open(FILE_IN, $filename_in) or die "cannot open $filename_in";
 open(FILE_OUT, ">$filename_out"); 
 

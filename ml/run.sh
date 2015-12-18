@@ -20,12 +20,19 @@ python ./utils/run.py -mode original_pwl_3 -action solve
 python ./utils/run.py -mode original_pwl_4 -action solve
 
 #SAMPLING
-#perl utils/sample.pl 0.1
-#
+perl utils/sample.pl 0.1 ./data/training/uni_train.svm
+perl utils/sample.pl 0.1 ./data/training/tri_train.svm
+perl utils/sample.pl 0.1 ./data/training/pwl_train.svm
+
+
 #CROSS VALIDATION
-#python ./utils/run.py -mode cv -using 01_linregr
+python ./utils/run.py -mode cv -using 01_linregr -bvp uni
+python ./utils/run.py -mode cv -using 01_linregr -bvp tri
+python ./utils/run.py -mode cv -using 01_linregr -bvp pwl
+
 #python ./utils/run.py -mode cv -using 02_liblinear &> ./data/cv_results/02_liblinear_cv_raw.csv
 #python ./utils/run.py -mode cv -using 03_libsvm &> ./data/cv_results/03_libsvm_cv_raw.csv
+
 #
 #TRAINING PHASE
 #Using the Best algorithm and its associated hyperparameters, retrain:

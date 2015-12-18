@@ -227,47 +227,45 @@ if __name__ == "__main__":
             header = str('learner,hyperparameters,max_error,mse_error\n')
             f.write(header)
 
-        T_range     = [20]
-        c_range     = [0.1,0.2,]  
-        rou_range   = [0.0001,]
+        T           = 1
+        c_range     = [0.1,0.2]  
+        rou_range   = [0.0001]
 
         maxError  = list()
         meanSqError = list()
-        for T in T_range:
-            for c in c_range:
-                for rou in rou_range:
-                    logging.info( 'T: %d, c: %d, rou:%f' % ( T , c , rou ))
-                    
-                    learner = "01_linregr"
-                    hyperparameters = 'c_' + str(c) +'_rou_'+ str(rou)
-                    path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
-                    cmd = 'mkdir -p ' + str(path) 
-                    os.system(cmd)
+        for c in c_range:
+            for rou in rou_range:
+                logging.info( 'T: %d, c: %d, rou:%f' % ( T , c , rou ))
+                
+                learner = "01_linregr"
+                hyperparameters = 'c_' + str(c) +'_rou_'+ str(rou)
+                path = './data/solutions/' + str(learner) + '/' + hyperparameters + '/' 
+                cmd = 'mkdir -p ' + str(path) 
+                os.system(cmd)
 
-                    weightsFile = path + hyperparameters + '.w'
+                weightsFile = path + hyperparameters + '.w'
 
-                    for training, validation in kFoldCrossValidation(X, K):
-	                #for x in X: assert (x in training) ^ (x in validation), x
-	                for x in X: next 
-                        linregr_train(training,T,c,rou)
-                        maxErr, meanSqErr = linregr_test(validation,T,c,rou)
-                        maxError.append(maxErr)
-                        meanSqError.append(meanSqErr)
-        final_maxError    = max(maxError)
-        final_meanSqError = max(meanSqError)         
-        
-        with open(cvResultName,'a') as e:
-            line  = str(learner)
-            line += ','
-            line += str(hyperparameters)
-            line += ','
-            line += str(final_maxError) 
-            line += ','
-            line += str(final_meanSqError) + "\n"
-            e.write(line)
-        e.close()        
-                    
-        
+                for training, validation in kFoldCrossValidation(X, K):
+	            #for x in X: assert (x in training) ^ (x in validation), x
+	            for x in X: next 
+                    linregr_train(training,T,c,rou)
+                    maxErr, meanSqErr = linregr_test(validation,T,c,rou)
+                    maxError.append(maxErr)
+                    meanSqError.append(meanSqErr)
+                
+                final_maxError    = max(maxError)
+                final_meanSqError = max(meanSqError)         
+                
+                with open(cvResultName,'a') as e:
+                    line  = str(learner)
+                    line += ','
+                    line += str(hyperparameters)
+                    line += ','
+                    line += str(final_maxError) 
+                    line += ','
+                    line += str(final_meanSqError) + "\n"
+                    e.write(line)
+                e.close()        
 
     if ( (args.mode == 'train') or (args.mode == 'test') ):
         T                 = int(args.T)       # number of epoch

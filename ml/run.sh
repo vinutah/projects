@@ -34,8 +34,9 @@ python ./utils/run.py -mode cv -using 02_liblinear -bvp uni &> ./data/cv_results
 python ./utils/run.py -mode cv -using 02_liblinear -bvp tri &> ./data/cv_results/02_liblinear_cv_tri_raw.csv
 python ./utils/run.py -mode cv -using 02_liblinear -bvp pwl &> ./data/cv_results/02_liblinear_cv_pwl_raw.csv
 
-
-#python ./utils/run.py -mode cv -using 03_libsvm &> ./data/cv_results/03_libsvm_cv_raw.csv
+python ./utils/run.py -mode cv -using 03_libsvm -bvp uni &> ./data/cv_results/03_libsvm_cv_uni_raw.csv
+python ./utils/run.py -mode cv -using 03_libsvm -bvp tri &> ./data/cv_results/03_libsvm_cv_tri_raw.csv
+python ./utils/run.py -mode cv -using 03_libsvm -bvp pwl &> ./data/cv_results/03_libsvm_cv_plw_raw.csv
 
 #
 #TRAINING PHASE

@@ -136,7 +136,7 @@ def liblinear(s,p,e,c,mode,bvp):
     return
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def libsvm(s,p,e,c,mode):
+def libsvm(s,p,e,c,mode,bvp):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     """method for invoking the lib svm with hyperparameters"""
     logging.debug("hp: s=%f p=%f e=%f c=%f" % ( s,p,e,c,) )
@@ -150,13 +150,15 @@ def libsvm(s,p,e,c,mode):
     
     modelFile = path + hyperparameters + '.m'
     weightsFile = path + hyperparameters + '.w'
+    trainFilePath   = './data/training/'
+    trainFileName   = trainFilePath + str(bvp) + '_train.svm_s'
 
     if mode == "train_cv":
         cmd = './learners/03_libsvm/svm-train' +\
                 ' -v 6 -h 0' +\
                 ' -s ' + str(s) + ' -p ' + str(p) + ' -e ' + str(e) + ' -c ' + str(c) +\
-                ' ./data/training/train.svm ' +\
-                str(weightsFile)
+                ' ' + str(trainFileName) +\
+                ' ' + str(weightsFile)
         logging.debug( cmd )
         os.system(cmd)
 
@@ -331,6 +333,9 @@ if __name__ == "__main__":
             logging.debug('invoking 10-fold cross validation for 03_libsvm')
             mode = 'train_cv'
             s = 3 #epsilon-SVR 
+            #P_range=[0.001]
+            #E_range=[0.001]
+            #C_range=[0.01]
             P_range=[0.001,0.01,0.1,]
             E_range=[0.001,0.01,0.1]
             C_range=[0.01,0.1,1,10]
@@ -338,8 +343,8 @@ if __name__ == "__main__":
             for p in P_range:
                 for e in E_range:
                     for c in C_range: 
-                        libsvm(s,p,e,c,mode)
-            writeCVResults(args.using)          
+                        libsvm(s,p,e,c,mode,bvp)
+            writeCVResults(args.using,bvp)          
 
     if args.mode  == 'train':
         bvp  = args.bvp
